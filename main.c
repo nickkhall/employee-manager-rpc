@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <memory.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <netinet/in.h>
 #include <netdb.h>
 
@@ -33,13 +34,16 @@ int main(int argc, char** argv) {
   server_addr.sin_addr.s_addr = INADDR_ANY;
   addr_len = sizeof(struct sockaddr);
 
-  if (setsockopt(sock_udp_fd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt) < 0)) {
-    perror("setsockopt");
+  int addr_sock_opt_addr = setsockopt(sock_udp_fd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt));
+  int addr_sock_opt_port = setsockopt(sock_udp_fd, SOL_SOCKET, SO_REUSEPORT, (char*)&opt, sizeof(opt));
+
+  if (addr_sock_opt_addr < 0) {
+    perror("setsockopt reuseaddr");
     exit(EXIT_FAILURE);
   }
 
-  if (setsockopt(sock_udp_fd, SOL_SOCKET, SO_REUSEPORT, (char*)&opt, sizeof(opt) < 0)) {
-    perror("setsockopt");
+  if (addr_sock_opt_port < 0) {
+    perror("setsockopt reuseport");
     exit(EXIT_FAILURE);
   }
 
@@ -60,6 +64,9 @@ int main(int argc, char** argv) {
   printf("RPC Server is now listening on port %d...\n", RPC_SERVER_PORT);
 
   // serlib_reset_buffer(server_recv_ser_buffer);
+  
+  // close socket
+  close(sock_udp_fd);
 
   return 0;
 }
