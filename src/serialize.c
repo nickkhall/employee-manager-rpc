@@ -69,6 +69,19 @@ void serlib_serialize_buffer_skip(ser_buff_t* b, unsigned long int skip_size) {
 };
 
 /*
+ * ---------------------------------------------------
+ * function: serlib_reset_buffer
+ * ---------------------------------------------------
+ * params  : b - ser_buff_t*
+ * ---------------------------------------------------
+ * Resets a buffer. (Sets ->next to 0)
+ * ---------------------------------------------------
+ */
+int serlib_reset_buffer(ser_buff_t* b) {
+  b->next = 0;
+};
+
+/*
  * ----------------------------------------------------
  * function: serlib_serialize_get_buffer_length
  * ----------------------------------------------------
@@ -77,7 +90,7 @@ void serlib_serialize_buffer_skip(ser_buff_t* b, unsigned long int skip_size) {
  * Gets length of serialized buffer.
  * ----------------------------------------------------
  */
-int serlib_serialize_get_buffer_length(ser_buff_t* b) {
+int serlib_get_buffer_length(ser_buff_t* b) {
   return b->size;
 };
 

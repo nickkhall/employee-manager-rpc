@@ -67,7 +67,7 @@ int serlib_reset_buffer(ser_buff_t* b);
  * Frees the memory and destroys a buffer type.
  * ---------------------------------------------------
  */
-int serlib_serialize_get_buffer_length(ser_buff_t* b);
+int serlib_get_buffer_length(ser_buff_t* b);
 
 /*
  * -----------------------------------------------------

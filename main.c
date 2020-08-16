@@ -11,6 +11,30 @@
 
 // yikes, dont do this kids
 #define SO_REUSEPORT 15
+int multiply(int a, int b);
+int multiply_server_stub_marshal(ser_buff_t* server_recv_ser_buffer);
+void rpc_server_process_msg(ser_buff_t* server_recv_ser_buffer,
+                            ser_buff_t* server_send_ser_buffer);
+
+// @TODO: DISTRUBUTE INTO SEP FILES, POC MODE HERE
+int multiply(int a, int b) {
+  return a * b;
+}
+
+int multiply_server_stub_unmarshal(ser_buff_t* server_recv_ser_buffer) {
+  int a,b;
+
+  serlib_deserialize_data_string((char*)&a, server_recv_ser_buffer, sizeof(int));
+  serlib_deserialize_data_string((char*)&b, server_recv_ser_buffer, sizeof(int));
+
+  return multiply(a, b);
+};
+
+void rpc_server_process_msg(ser_buff_t* server_recv_ser_buffer,
+                            ser_buff_t* server_send_ser_buffer)
+{
+  int res = multiply_server_stub_unmarshal(server_recv_ser_buffer);
+};
 
 int main(int argc, char** argv) {
   int sock_udp_fd = 0,
@@ -52,6 +76,7 @@ int main(int argc, char** argv) {
     exit(1);
   }
 
+  // prepare server memory buffers to send and recv serialized data
   ser_buff_t *server_send_ser_buffer = NULL,
              *server_recv_ser_buffer = NULL;
 
@@ -62,8 +87,25 @@ int main(int argc, char** argv) {
                                  MAX_RECV_SEND_BUFF_SIZE);
 
   printf("RPC Server is now listening on port %d...\n", RPC_SERVER_PORT);
+READ:
+  serlib_reset_buffer(server_recv_ser_buffer);
 
-  // serlib_reset_buffer(server_recv_ser_buffer);
+  // recv data from client into local buffer
+  len = recvfrom(sock_udp_fd,
+                 server_recv_ser_buffer->buffer,
+                 serlib_get_buffer_length(server_recv_ser_buffer),
+                 0, (struct sockaddr*)&client_addr,
+                 &addr_len);
+
+  printf("Number of bytes received: %d\n", len);
+
+  // prepare the buffer to store the reply msg to be sent to client
+  serlib_reset_buffer(server_send_ser_buffer);
+
+  rpc_server_process_msg(server_recv_ser_buffer,
+                         server_send_ser_buffer);
+
+  goto READ;
   
   // close socket
   close(sock_udp_fd);
