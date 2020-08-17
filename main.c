@@ -76,6 +76,7 @@ int main(int argc, char** argv) {
   ser_buff_t* recv_buffer = NULL;
   ser_buff_t* send_buffer = NULL;
 
+  serlib_init_buffer_of_size(&send_buffer, MAX_RECV_BUFF_SIZE);
   serlib_init_buffer_of_size(&recv_buffer, MAX_RECV_BUFF_SIZE);
 
   struct sockaddr_in server_addr,
