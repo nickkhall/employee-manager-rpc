@@ -13,29 +13,29 @@ typedef struct {
 
 /*
  * ------------------------------------------------------
- * function: serlib_serialize_init_buffer
+ * function: serlib_init_buffer
  * ------------------------------------------------------
  * params  : b - ser_buff_t**
  * ------------------------------------------------------
  * Initializes the serialized buffer type.
  * ------------------------------------------------------
  */
-void serlib_serialize_init_buffer(ser_buff_t** b);
+void serlib_init_buffer(ser_buff_t** b);
 
 /*
  * ------------------------------------------------------
- * function: serlib_serialize_init_buffer_of_size
+ * function: serlib_init_buffer_of_size
  * ------------------------------------------------------
  * params  : b - ser_buff_t**
  * ------------------------------------------------------
  * Initializes the serialized buffer type.
  * ------------------------------------------------------
  */
-void serlib_serialize_init_buffer_of_size(ser_buff_t** b, int size);
+void serlib_init_buffer_of_size(ser_buff_t** b, int size);
 
 /*
  * --------------------------------------------------------------------
- * function: serlib_serialize_buffer_skip
+ * function: serlib_buffer_skip
  * --------------------------------------------------------------------
  * params  :
  *         > buffer    - ser_buff_t*
@@ -45,7 +45,7 @@ void serlib_serialize_init_buffer_of_size(ser_buff_t** b, int size);
  * (In/Decrements the next pointer)
  * --------------------------------------------------------------------
  */
-void serlib_serialize_buffer_skip(ser_buff_t* b, unsigned long int skip_size);
+void serlib_buffer_skip(ser_buff_t* b, unsigned long int skip_size);
 
 /*
  * ---------------------------------------------------
@@ -60,7 +60,7 @@ int serlib_reset_buffer(ser_buff_t* b);
 
 /*
  * ---------------------------------------------------
- * function: serlib_serialize_get_buffer_length
+ * function: serlib_get_buffer_length
  * ---------------------------------------------------
  * params  : b - ser_buff_t*
  * ---------------------------------------------------
@@ -71,25 +71,25 @@ int serlib_get_buffer_length(ser_buff_t* b);
 
 /*
  * -----------------------------------------------------
- * function: serlib_serialize_get_buffer_data_size
+ * function: serlib_get_buffer_data_size
  * -----------------------------------------------------
  * params  : b - ser_buff_t*
  * -----------------------------------------------------
  * Gets data size of serialized buffer.
  * -----------------------------------------------------
  */
-int serlib_serialize_get_buffer_data_size(ser_buff_t* b);
+int serlib_get_buffer_data_size(ser_buff_t* b);
 
 /*
  * --------------------------------------------
- * function: serlib_serialize_free_buffer
+ * function: serlib_free_buffer
  * --------------------------------------------
  * params  : b - ser_buff_t*
  * --------------------------------------------
  * Frees the memory and destroys a buffer type.
  * --------------------------------------------
  */
-void serlib_serialize_free_buffer(ser_buff_t* b);
+void serlib_free_buffer(ser_buff_t* b);
 
 /*
  * ------------------------------------------------------------------------
@@ -143,7 +143,7 @@ void serlib_deserialize_data_time_t(time_t* dest, ser_buff_t*b, int size);
 
 /*
  * ----------------------------------------------------------------------
- * function: serlib_serialize_list_t
+ * function: serlib_list_t
  * ----------------------------------------------------------------------
  * params  :
  *         > list - list_t*
@@ -152,7 +152,7 @@ void serlib_deserialize_data_time_t(time_t* dest, ser_buff_t*b, int size);
  * Serializes an employee list.
  * ----------------------------------------------------------------------
  */
-void serlib_serialize_list_t(list_t* list,
+void serlib_list_t(list_t* list,
                              ser_buff_t* b,
                              void(*serialize_fn_ptr)(void*, ser_buff_t* b));
 
@@ -170,7 +170,7 @@ list_t* serlib_deserialize_list_t(ser_buff_t* b);
 
 /*
  * ----------------------------------------------------------------------
- * function: serlib_serialize_list_node_t
+ * function: serlib_list_node_t
  * ----------------------------------------------------------------------
  * params  : 
  *         > list_node - list_node_t*
@@ -179,7 +179,7 @@ list_t* serlib_deserialize_list_t(ser_buff_t* b);
  * Serializes an employee list node.
  * ----------------------------------------------------------------------
  */
-void serlib_serialize_list_node_t(list_node_t* list_node,
+void serlib_list_node_t(list_node_t* list_node,
                                   ser_buff_t* b,
                                   void (*serialize_fn_ptr)(void*, ser_buff_t* b));
 
@@ -196,7 +196,7 @@ list_node_t* serlib_deserialize_list_node_t(ser_buff_t* b);
 
 /*
  * ----------------------------------------------------------------------
- * function: serlib_serialize_employee_t_wrapper
+ * function: serlib_employee_t_wrapper
  * ----------------------------------------------------------------------
  * params  : 
  *         > obj - void*
@@ -205,11 +205,11 @@ list_node_t* serlib_deserialize_list_node_t(ser_buff_t* b);
  * Deerializes a employee list node.
  * ----------------------------------------------------------------------
  */
-void serlib_serialize_employee_t_wrapper(void* obj, ser_buff_t* b);
+void serlib_employee_t_wrapper(void* obj, ser_buff_t* b);
 
 /*
  * ----------------------------------------------------------------------
- * function: serlib_serialize_employee_t
+ * function: serlib_employee_t
  * ----------------------------------------------------------------------
  * params  :
  *         > employee - employee_t*
@@ -218,7 +218,7 @@ void serlib_serialize_employee_t_wrapper(void* obj, ser_buff_t* b);
  * Serializes a employee_t.
  * ----------------------------------------------------------------------
  */
-void serlib_serialize_employee_t(employee_t* employee, ser_buff_t* b);
+void serlib_employee_t(employee_t* employee, ser_buff_t* b);
 
 /*
  * ----------------------------------------------------------------------

@@ -7,14 +7,14 @@
 
 /*
  * ------------------------------------------------------
- * function: serlib_serialize_init_buffer
+ * function: serlib_init_buffer
  * ------------------------------------------------------
  * params  : b - ser_buff_t**
  * ------------------------------------------------------
  * Initializes the serialized buffer type.
  * ------------------------------------------------------
  */
-void serlib_serialize_init_buffer(ser_buff_t** b) {
+void serlib_init_buffer(ser_buff_t** b) {
   // create memory for serialized buffer type
   (*b) = (ser_buff_t*) calloc(1, sizeof(ser_buff_t));
 
@@ -30,14 +30,14 @@ void serlib_serialize_init_buffer(ser_buff_t** b) {
 
 /*
  * ------------------------------------------------------
- * function: serlib_serialize_init_buffer_of_size
+ * function: serlib_init_buffer_of_size
  * ------------------------------------------------------
  * params  : b - ser_buff_t**
  * ------------------------------------------------------
  * Initializes the serialized buffer type.
  * ------------------------------------------------------
  */
-void serlib_serialize_init_buffer_of_size(ser_buff_t** b, int size) {
+void serlib_init_buffer_of_size(ser_buff_t** b, int size) {
   (*b) = (ser_buff_t*) calloc(1, sizeof(ser_buff_t));
   (*b)->buffer = calloc(1, size);
   (*b)->size = size;
@@ -46,7 +46,7 @@ void serlib_serialize_init_buffer_of_size(ser_buff_t** b, int size) {
 
 /*
  * --------------------------------------------------------------------
- * function: serlib_serialize_buffer_skip
+ * function: serlib_buffer_skip
  * --------------------------------------------------------------------
  * params  :
  *         > buffer    - ser_buff_t*
@@ -56,7 +56,7 @@ void serlib_serialize_init_buffer_of_size(ser_buff_t** b, int size) {
  * (In/Decrements the next pointer)
  * --------------------------------------------------------------------
  */
-void serlib_serialize_buffer_skip(ser_buff_t* b, unsigned long int skip_size) {
+void serlib_buffer_skip(ser_buff_t* b, unsigned long int skip_size) {
   // if the skip_size is above 0,
   // and the buffer has access to the needed memory
   if (b->next + skip_size > 0 &&
@@ -83,7 +83,7 @@ int serlib_reset_buffer(ser_buff_t* b) {
 
 /*
  * ----------------------------------------------------
- * function: serlib_serialize_get_buffer_length
+ * function: serlib_get_buffer_length
  * ----------------------------------------------------
  * params  : b - ser_buff_t*
  * ----------------------------------------------------
@@ -96,27 +96,27 @@ int serlib_get_buffer_length(ser_buff_t* b) {
 
 /*
  * -------------------------------------------------------
- * function: serlib_serialize_get_buffer_data_size
+ * function: serlib_get_buffer_data_size
  * -------------------------------------------------------
  * params  : b - ser_buff_t*
  * -------------------------------------------------------
  * Gets data size of serialized buffer.
  * -------------------------------------------------------
  */
-int serlib_serialize_get_buffer_data_size(ser_buff_t* b) {
-  return b->size;
+int serlib_get_buffer_data_size(ser_buff_t* b) {
+  return b->next;
 };
 
 /*
  * --------------------------------------------
- * function: serlib_serialize_free_buffer
+ * function: serlib_free_buffer
  * --------------------------------------------
  * params  : b - ser_buff_t*
  * --------------------------------------------
  * Frees the memory and destroys a buffer type.
  * --------------------------------------------
  */
-void serlib_serialize_free_buffer(ser_buff_t* b) {
+void serlib_free_buffer(ser_buff_t* b) {
   free(b->buffer);
   free(b);
 };
@@ -227,14 +227,14 @@ void serlib_deserialize_data_time_t(time_t* dest, ser_buff_t*b, int size) {
 
 /*
  * ----------------------------------------------------------------------
- * function: serlib_serialize_list_t
+ * function: serlib_list_t
  * ----------------------------------------------------------------------
  * params  : b - ser_buff_t*
  * ----------------------------------------------------------------------
  * Deserializes a buffers' employee_t buffer.
  * ----------------------------------------------------------------------
  */
-void serlib_serialize_list_t(list_t* list,
+void serlib_list_t(list_t* list,
                              ser_buff_t* b,
                              void(*serialize_fn_ptr)(void*, ser_buff_t* b))
 {
@@ -245,7 +245,7 @@ void serlib_serialize_list_t(list_t* list,
     return;
   }
 
-  serlib_serialize_list_node_t(list->head, b, serialize_fn_ptr);
+  serlib_list_node_t(list->head, b, serialize_fn_ptr);
 };
 
 /*
@@ -277,14 +277,14 @@ list_t* serlib_deserialize_list_t(ser_buff_t* b) {
 
 /*
  * ----------------------------------------------------------------------
- * function: serlib_serialize_list_node_t
+ * function: serlib_list_node_t
  * ----------------------------------------------------------------------
  * params  : b - ser_buff_t*
  * ----------------------------------------------------------------------
  * Serializes a employee list node.
  * ----------------------------------------------------------------------
  */
-void serlib_serialize_list_node_t(list_node_t* list_node, ser_buff_t* b, void (*serialize_fn_ptr)(void*, ser_buff_t* b)) {
+void serlib_list_node_t(list_node_t* list_node, ser_buff_t* b, void (*serialize_fn_ptr)(void*, ser_buff_t* b)) {
   // if this is a sentinel section, return null
   if (!list_node) {
     unsigned int sentinel = 0xFFFFFFFF;
@@ -293,7 +293,7 @@ void serlib_serialize_list_node_t(list_node_t* list_node, ser_buff_t* b, void (*
   }
 
   serialize_fn_ptr(list_node->data, b);
-  serlib_serialize_list_node_t(list_node->next, b, serialize_fn_ptr);
+  serlib_list_node_t(list_node->next, b, serialize_fn_ptr);
 };
 
 /*
@@ -345,7 +345,7 @@ list_node_t* serlib_deserialize_list_node_t(ser_buff_t* b) {
 
 /*
  * ----------------------------------------------------------------------
- * function: serlib_serialize_employee_t_wrapper
+ * function: serlib_employee_t_wrapper
  * ----------------------------------------------------------------------
  * params  : 
  *         > obj - void*
@@ -354,8 +354,8 @@ list_node_t* serlib_deserialize_list_node_t(ser_buff_t* b) {
  * Generic wrapper function for serializing an employee.
  * ----------------------------------------------------------------------
  */
-void serlib_serialize_employee_t_wrapper(void* obj, ser_buff_t* b) {
-  serlib_serialize_employee_t(obj, b);
+void serlib_employee_t_wrapper(void* obj, ser_buff_t* b) {
+  serlib_employee_t(obj, b);
 };
 
 /*
@@ -378,14 +378,14 @@ void serlib_serialize_employee_t_wrapper(void* obj, ser_buff_t* b) {
 
 /*
  * ----------------------------------------------------------------------
- * function: serlib_serialize_employee_t
+ * function: serlib_employee_t
  * ----------------------------------------------------------------------
  * params  : b - ser_buff_t*
  * ----------------------------------------------------------------------
  * Serializes an employee.
  * ----------------------------------------------------------------------
  */
-void serlib_serialize_employee_t(employee_t* employee, ser_buff_t* b) {
+void serlib_employee_t(employee_t* employee, ser_buff_t* b) {
   // if this is a sentinel section, return null
   unsigned int sentinel = 0xFFFFFFFF;
   if (!employee) {
@@ -429,7 +429,7 @@ employee_t* serlib_deserialize_employee_t(ser_buff_t* b) {
     return NULL;
   }
 
-  serlib_serialize_buffer_skip(b, -1 * sizeof(unsigned long int));
+  serlib_buffer_skip(b, -1 * sizeof(unsigned long int));
 
   employee_t* employee = calloc(1, sizeof(employee_t));
 
@@ -449,7 +449,7 @@ employee_t* serlib_deserialize_employee_t(ser_buff_t* b) {
   if (sentinel == 0xFFFFFFFF) {
     employee->salary = NULL;
   } else {
-    serlib_serialize_buffer_skip(b, -1 * sizeof(unsigned long int));
+    serlib_buffer_skip(b, -1 * sizeof(unsigned long int));
     employee->salary = calloc(1, sizeof(int));
     serlib_serialize_data_string(b, (char*) employee->salary, sizeof(int));
   }
