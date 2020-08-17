@@ -95,17 +95,12 @@ int main(int argc, char** argv) {
   addr_len = sizeof(struct sockaddr);
 
   int addr_sock_opt_addr = setsockopt(sock_udp_fd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt));
-  int addr_sock_opt_port = setsockopt(sock_udp_fd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt));
 
   if (addr_sock_opt_addr < 0) {
     perror("setsockopt reuseaddr");
     exit(EXIT_FAILURE);
   }
 
-  if (addr_sock_opt_port < 0) {
-    perror("setsockopt reuseport");
-    exit(EXIT_FAILURE);
-  }
   int binded = bind(sock_udp_fd, (struct sockaddr*)&server_addr, sizeof(struct sockaddr));
 
   if (binded == -1) {
