@@ -10,7 +10,7 @@
 #include "src/headers/serialize.h"
 
 // yikes, dont do this kids
-#define SO_REUSEPORT 15
+//#define SO_REUSEPORT 15
 /*
  * RPC FUNCTIONS (MOCK / POC)
  */
@@ -94,7 +94,7 @@ int main(int argc, char** argv) {
   addr_len = sizeof(struct sockaddr);
 
   int addr_sock_opt_addr = setsockopt(sock_udp_fd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt));
-  int addr_sock_opt_port = setsockopt(sock_udp_fd, SOL_SOCKET, SO_REUSEPORT, (char*)&opt, sizeof(opt));
+  int addr_sock_opt_port = setsockopt(sock_udp_fd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt));
 
   if (addr_sock_opt_addr < 0) {
     perror("setsockopt reuseaddr");
@@ -105,8 +105,9 @@ int main(int argc, char** argv) {
     perror("setsockopt reuseport");
     exit(EXIT_FAILURE);
   }
+  int binded = bind(sock_udp_fd, (struct sockaddr*)&server_addr, sizeof(struct sockaddr));
 
-  if (bind(sock_udp_fd, (struct sockaddr*)&server_addr, sizeof(struct sockaddr)) == -1) {
+  if (binded == -1) {
     printf("RPC ERROR:: Failed to bind to socket\n");
     exit(1);
   }
