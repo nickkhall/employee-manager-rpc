@@ -53,11 +53,11 @@ void serlib_init_buffer_of_size(ser_buff_t** b, int size) {
  * ------------------------------------------------------
  */
 unsigned int serlib_get_header_size(void) {
-  serialized_header_t serialized_header;
-  return sizeof(serialized_header.tid)
-         + sizeof(serialized_header.rpc_proc_id)
-         + sizeof(serialized_header.msg_type)
-         + sizeof(serialized_header.payload_size);
+  ser_header_t ser_header;
+  return sizeof(ser_header.tid)
+         + sizeof(ser_header.rpc_proc_id)
+         + sizeof(ser_header.msg_type)
+         + sizeof(ser_header.payload_size);
 };
 
 /*

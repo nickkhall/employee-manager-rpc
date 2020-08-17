@@ -9,6 +9,8 @@
 #include "src/headers/common.h"
 #include "src/headers/serialize.h"
 
+#define MULTIPLY_ID 55
+
 // yikes, dont do this kids
 //#define SO_REUSEPORT 15
 /*
@@ -22,13 +24,13 @@ void multiply_server_stub_marshal(int res, ser_buff_t* send_buffer);
 // void rpc_server_process_msg(ser_buff_t* send_buffer);
 // rpc_callback rpc_callback_array[];
 
-//unsigned int rpc_header_size() {
-//  rpc_header_t rpc_header;
+//unsigned int rpc_ser_header_size() {
+//  rpc_ser_header_t rpc_ser_header;
 //
-//  return sizeof(rpc_header.tid)
-//         + sizeof(rpc_header.rpc_proc_id)
-//         + sizeof(rpc_header.msg_type)
-//         + sizeof(rpc_header.payload_size);
+//  return sizeof(rpc_ser_header.tid)
+//         + sizeof(rpc_ser_header.rpc_proc_id)
+//         + sizeof(rpc_ser_header.msg_type)
+//         + sizeof(rpc_ser_header.payload_size);
 //};
 
 // @TODO: DISTRUBUTE INTO SEP FILES, POC MODE HERE
@@ -51,19 +53,26 @@ void multiply_server_stub_marshal(int res, ser_buff_t* send_buffer) {
 
 void rpc_server_process_msg(ser_buff_t* recv_buffer,
                             ser_buff_t* send_buffer) {
-  //rpc_hdr_t rpc_header;
+  ser_header_t* rpc_ser_header = (ser_header_t*) malloc(sizeof(struct ser_header_t));
+  if (!rpc_ser_header) {
+    printf("ERROR:: RPC - Failed to allocate memory for rpc_ser_header\n");
+    free(recv_buffer);
+    free(send_buffer);
+    exit(1);
+  }
 
-  //serlib_deserialize_data_string(send_buffer, (char*)&rpc_header.tid,          sizeof(rpc_header.tid));
-  //serlib_deserialize_data_string(send_buffer, (char*)&rpc_header.rpc_proc_id,  sizeof(rpc_header.rpc_proc_id));
-  //serlib_deserialize_data_string(send_buffer, (char*)&rpc_header.msg_type,     sizeof(rpc_header.msg_type));
-  //serlib_deserialize_data_string(send_buffer, (char*)&rpc_header.payload_size, sizeof(rpc_header.payload_size));
+  serlib_deserialize_data_string(send_buffer, (char*)&rpc_ser_header->rpc_proc_id,  sizeof(rpc_ser_header->rpc_proc_id));
+  serlib_deserialize_data_string(send_buffer, (char*)&rpc_ser_header->payload_size, sizeof(rpc_ser_header->payload_size));
 
-  //printf("RPC - rpc_header.rpc_proc_id: %d\n", rpc_header->rpc_proc_id);
-  //return rpc_callback_array[rpc_header.rpc_proc_id](send_buffer);
+  if (rpc_ser_header->rpc_proc_id == MULTIPLY_ID) {
+    int res = multiply_server_stub_unmarshal(recv_buffer);
+
+    multiply_server_stub_marshal(res, send_buffer);
+  }
+
+  //printf("RPC - rpc_ser_header.rpc_proc_id: %d\n", rpc_ser_header->rpc_proc_id);
+  //return rpc_callback_array[rpc_ser_header.rpc_proc_id](send_buffer);
   
-  int res = multiply_server_stub_unmarshal(recv_buffer);
-
-  multiply_server_stub_marshal(res, send_buffer);
 };
 
 int main(int argc, char** argv) {

@@ -6,18 +6,24 @@
 #include "employee.h"
 #include "common.h"
 
+typedef enum {
+  RPC_REQ,
+  RPC_REPLY,
+  RPC_AUTH
+} rpc_enum_t;
+
 typedef struct ser_buff_t {
   char* buffer;
   int size;
   int next;
 } ser_buff_t;
 
-typedef struct serialized_header_t {
+typedef struct ser_header_t {
   unsigned int tid;
   unsigned int rpc_proc_id;
   rpc_enum_t msg_type;
   unsigned int payload_size;
-} serialized_header_t;
+} ser_header_t;
 
 typedef struct client_param_t {
   unsigned int recv_buff_size;
