@@ -149,14 +149,14 @@ void serlib_serialize_data_string(ser_buff_t* b, char* data, int nbytes);
  * function: serlib_deserialize_data_string
  * ----------------------------------------------------------------------
  * params  :
- *         > dest - char*
  *         > b    - ser_buff_t*
+ *         > dest - char*
  *         > size - int
  * ----------------------------------------------------------------------
  * Deserializes a buffers' string buffer.
  * ----------------------------------------------------------------------
  */
-void serlib_deserialize_data_string(char* dest, ser_buff_t* b, int size);
+void serlib_deserialize_data_string(ser_buff_t* b, char* dest, int size);
 
 /*
  * ----------------------------------------------------------------------

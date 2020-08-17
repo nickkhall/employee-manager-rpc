@@ -223,7 +223,7 @@ void serlib_serialize_data_string(ser_buff_t* b, char* data, int nbytes) {
  * Deserializes a buffers' string buffer.
  * ----------------------------------------------------------------------
  */
-void serlib_deserialize_data_string(char* dest, ser_buff_t* b, int size) {
+void serlib_deserialize_data_string(ser_buff_t* b, char* dest, int size) {
   if (!b || !b->buffer) assert(0);
   if (!size) return;
   if ((b->size - b->next) < size) assert(0);

@@ -24,15 +24,6 @@ void multiply_server_stub_marshal(int res, ser_buff_t* send_buffer);
 // void rpc_server_process_msg(ser_buff_t* send_buffer);
 // rpc_callback rpc_callback_array[];
 
-//unsigned int rpc_ser_header_size() {
-//  rpc_ser_header_t rpc_ser_header;
-//
-//  return sizeof(rpc_ser_header.tid)
-//         + sizeof(rpc_ser_header.rpc_proc_id)
-//         + sizeof(rpc_ser_header.msg_type)
-//         + sizeof(rpc_ser_header.payload_size);
-//};
-
 // @TODO: DISTRUBUTE INTO SEP FILES, POC MODE HERE
 int multiply(int a, int b) {
   return a * b;
@@ -61,8 +52,8 @@ void rpc_server_process_msg(ser_buff_t* recv_buffer,
     exit(1);
   }
 
-  serlib_deserialize_data_string(send_buffer, (char*)&rpc_ser_header->rpc_proc_id,  sizeof(rpc_ser_header->rpc_proc_id));
-  serlib_deserialize_data_string(send_buffer, (char*)&rpc_ser_header->payload_size, sizeof(rpc_ser_header->payload_size));
+  serlib_deserialize_data_string(recv_buffer, (char*)&rpc_ser_header->rpc_proc_id,  sizeof(rpc_ser_header->rpc_proc_id));
+  serlib_deserialize_data_string(recv_buffer, (char*)&rpc_ser_header->payload_size, sizeof(rpc_ser_header->payload_size));
 
   if (rpc_ser_header->rpc_proc_id == MULTIPLY_ID) {
     int res = multiply_server_stub_unmarshal(recv_buffer);
