@@ -4,12 +4,25 @@
 #define SERIALIZE_BUFFER_DEFAULT_SIZE 100
 
 #include "employee.h"
+#include "common.h"
 
-typedef struct {
+typedef struct ser_buff_t {
   char* buffer;
   int size;
   int next;
 } ser_buff_t;
+
+typedef struct serialized_header_t {
+  unsigned int tid;
+  unsigned int rpc_proc_id;
+  rpc_enum_t msg_type;
+  unsigned int payload_size;
+} serialized_header_t;
+
+typedef struct client_param_t {
+  unsigned int recv_buff_size;
+  ser_buff_t*  recv_ser_b;
+} client_param_t;
 
 /*
  * ------------------------------------------------------
@@ -32,6 +45,15 @@ void serlib_init_buffer(ser_buff_t** b);
  * ------------------------------------------------------
  */
 void serlib_init_buffer_of_size(ser_buff_t** b, int size);
+
+/*
+ * ------------------------------------------------------
+ * function: serlib_get_header_size
+ * ------------------------------------------------------
+ * Returns size of serialized header.
+ * ------------------------------------------------------
+ */
+unsigned int serlib_get_header_size(void);
 
 /*
  * --------------------------------------------------------------------
@@ -79,6 +101,17 @@ int serlib_get_buffer_length(ser_buff_t* b);
  * -----------------------------------------------------
  */
 int serlib_get_buffer_data_size(ser_buff_t* b);
+
+/*
+ * -----------------------------------------------------
+ * function: serlib_copy_in_buffer_by_size
+ * -----------------------------------------------------
+ * params  : b - ser_buff_t*
+ * -----------------------------------------------------
+ * 
+ * -----------------------------------------------------
+ */
+void serlib_copy_in_buffer_by_size(ser_buff_t* client_send_ser_buffer, int size, char* value, int offset);
 
 /*
  * --------------------------------------------
