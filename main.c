@@ -12,7 +12,8 @@
 // yikes, dont do this kids
 #define SO_REUSEPORT 15
 int multiply(int a, int b);
-int multiply_server_stub_marshal(ser_buff_t* server_recv_ser_buffer);
+int multiply_server_stub_unmarshal(ser_buff_t* server_recv_ser_buffer);
+void multiply_server_stub_marshal(int res, ser_buff_t* server_send_ser_buffer);
 void rpc_server_process_msg(ser_buff_t* server_recv_ser_buffer,
                             ser_buff_t* server_send_ser_buffer);
 
@@ -30,10 +31,16 @@ int multiply_server_stub_unmarshal(ser_buff_t* server_recv_ser_buffer) {
   return multiply(a, b);
 };
 
+void multiply_server_stub_marshal(int res, ser_buff_t* server_send_ser_buffer) {
+  serlib_serialize_data_string(server_send_ser_buffer, (char*)&res, sizeof(int));
+};
+
 void rpc_server_process_msg(ser_buff_t* server_recv_ser_buffer,
                             ser_buff_t* server_send_ser_buffer)
 {
   int res = multiply_server_stub_unmarshal(server_recv_ser_buffer);
+  
+  multiply_server_stub_marshal(res, server_send_ser_buffer);
 };
 
 int main(int argc, char** argv) {
