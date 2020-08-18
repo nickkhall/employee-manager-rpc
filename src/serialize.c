@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -42,6 +43,21 @@ void serlib_init_buffer_of_size(ser_buff_t** b, int size) {
   (*b)->buffer = calloc(1, size);
   (*b)->size = size;
   (*b)->next = 0;
+};
+
+/*
+ * ------------------------------------------------------
+ * function: serlib_get_header_size
+ * ------------------------------------------------------
+ * Returns size of serialized header.
+ * ------------------------------------------------------
+ */
+unsigned int serlib_get_header_size(void) {
+  ser_header_t ser_header;
+  return sizeof(ser_header.tid)
+         + sizeof(ser_header.rpc_proc_id)
+         + sizeof(ser_header.msg_type)
+         + sizeof(ser_header.payload_size);
 };
 
 /*
@@ -105,6 +121,24 @@ int serlib_get_buffer_length(ser_buff_t* b) {
  */
 int serlib_get_buffer_data_size(ser_buff_t* b) {
   return b->next;
+};
+
+/*
+ * -----------------------------------------------------
+ * function: serlib_copy_in_buffer_by_size
+ * -----------------------------------------------------
+ * params  : b - ser_buff_t*
+ * -----------------------------------------------------
+ * 
+ * -----------------------------------------------------
+ */
+void serlib_copy_in_buffer_by_size(ser_buff_t* client_send_ser_buffer, int size, char* value, int offset) {
+  if (offset > client_send_ser_buffer->size) {
+    printf("%s(): ERROR:: REST - Attempted to write outside of buffer limits\n", __FUNCTION__);
+    return;
+  }
+
+  memcpy(client_send_ser_buffer->buffer + offset, value, size);
 };
 
 /*
@@ -189,13 +223,37 @@ void serlib_serialize_data_string(ser_buff_t* b, char* data, int nbytes) {
  * Deserializes a buffers' string buffer.
  * ----------------------------------------------------------------------
  */
-void serlib_deserialize_data_string(char* dest, ser_buff_t* b, int size) {
+void serlib_deserialize_data_string(ser_buff_t* b, char* dest, int size) {
   if (!b || !b->buffer) assert(0);
   if (!size) return;
   if ((b->size - b->next) < size) assert(0);
 
   // copy data from dest to string buffer
   memcpy(dest, b->buffer + b->next, size);
+
+  // increment the buffer's next pointer
+  b->next += size;
+};
+
+/*
+ * ----------------------------------------------------------------------
+ * function: serlib_deserialize_data_int
+ * ----------------------------------------------------------------------
+ * params  :
+ *         > dest - int*
+ *         > b    - ser_buff_t*
+ *         > size - int
+ * ----------------------------------------------------------------------
+ * Deserializes a buffers' string buffer for an integer.
+ * ----------------------------------------------------------------------
+ */
+void serlib_deserialize_data_int(ser_buff_t* b, int* dest, int size) {
+  if (!b || !b->buffer) assert(0);
+  if (!size) return;
+  if ((b->size - b->next) < size) assert(0);
+
+  // copy data from dest to string buffer
+  memcpy(dest, (int*)b->buffer + b->next, size);
 
   // increment the buffer's next pointer
   b->next += size;

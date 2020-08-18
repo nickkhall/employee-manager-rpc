@@ -9,8 +9,8 @@
 #include "src/headers/common.h"
 #include "src/headers/serialize.h"
 
-// yikes, dont do this kids
-//#define SO_REUSEPORT 15
+#define MULTIPLY_ID 55
+
 /*
  * RPC FUNCTIONS (MOCK / POC)
  */
@@ -22,15 +22,6 @@ void multiply_server_stub_marshal(int res, ser_buff_t* send_buffer);
 // void rpc_server_process_msg(ser_buff_t* send_buffer);
 // rpc_callback rpc_callback_array[];
 
-//unsigned int rpc_header_size() {
-//  rpc_header_t rpc_header;
-//
-//  return sizeof(rpc_header.tid)
-//         + sizeof(rpc_header.rpc_proc_id)
-//         + sizeof(rpc_header.msg_type)
-//         + sizeof(rpc_header.payload_size);
-//};
-
 // @TODO: DISTRUBUTE INTO SEP FILES, POC MODE HERE
 int multiply(int a, int b) {
   return a * b;
@@ -39,8 +30,8 @@ int multiply(int a, int b) {
 int multiply_server_stub_unmarshal(ser_buff_t* recv_buffer) {
   int a,b;
 
-  serlib_deserialize_data_string((char*)&a, recv_buffer, sizeof(int));
-  serlib_deserialize_data_string((char*)&b, recv_buffer, sizeof(int));
+  serlib_deserialize_data_string(recv_buffer, (char*)&a, sizeof(int));
+  serlib_deserialize_data_string(recv_buffer, (char*)&b, sizeof(int));
 
   return multiply(a, b);
 };
@@ -51,19 +42,28 @@ void multiply_server_stub_marshal(int res, ser_buff_t* send_buffer) {
 
 void rpc_server_process_msg(ser_buff_t* recv_buffer,
                             ser_buff_t* send_buffer) {
-  //rpc_hdr_t rpc_header;
+  ser_header_t* rpc_ser_header = (ser_header_t*) malloc(sizeof(struct ser_header_t));
+  if (!rpc_ser_header) {
+    printf("ERROR:: RPC - Failed to allocate memory for rpc_ser_header\n");
+    free(recv_buffer);
+    free(send_buffer);
+    exit(1);
+  }
 
-  //serlib_deserialize_data_string(send_buffer, (char*)&rpc_header.tid,          sizeof(rpc_header.tid));
-  //serlib_deserialize_data_string(send_buffer, (char*)&rpc_header.rpc_proc_id,  sizeof(rpc_header.rpc_proc_id));
-  //serlib_deserialize_data_string(send_buffer, (char*)&rpc_header.msg_type,     sizeof(rpc_header.msg_type));
-  //serlib_deserialize_data_string(send_buffer, (char*)&rpc_header.payload_size, sizeof(rpc_header.payload_size));
+  serlib_deserialize_data_string(recv_buffer, (char*)&rpc_ser_header->tid,          sizeof(rpc_ser_header->tid));
+  serlib_deserialize_data_string(recv_buffer, (char*)&rpc_ser_header->rpc_proc_id,  sizeof(rpc_ser_header->rpc_proc_id));
+  serlib_deserialize_data_string(recv_buffer, (char*)&rpc_ser_header->msg_type,     sizeof(rpc_ser_header->msg_type));
+  serlib_deserialize_data_string(recv_buffer, (char*)&rpc_ser_header->payload_size, sizeof(rpc_ser_header->payload_size));
 
-  //printf("RPC - rpc_header.rpc_proc_id: %d\n", rpc_header->rpc_proc_id);
-  //return rpc_callback_array[rpc_header.rpc_proc_id](send_buffer);
+  if (rpc_ser_header->rpc_proc_id == MULTIPLY_ID) {
+    int res = multiply_server_stub_unmarshal(recv_buffer);
+
+    multiply_server_stub_marshal(res, send_buffer);
+  }
+
+  //printf("RPC - rpc_ser_header.rpc_proc_id: %d\n", rpc_ser_header->rpc_proc_id);
+  //return rpc_callback_array[rpc_ser_header.rpc_proc_id](send_buffer);
   
-  int res = multiply_server_stub_unmarshal(recv_buffer);
-
-  multiply_server_stub_marshal(res, send_buffer);
 };
 
 int main(int argc, char** argv) {
@@ -95,17 +95,12 @@ int main(int argc, char** argv) {
   addr_len = sizeof(struct sockaddr);
 
   int addr_sock_opt_addr = setsockopt(sock_udp_fd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt));
-  int addr_sock_opt_port = setsockopt(sock_udp_fd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt));
 
   if (addr_sock_opt_addr < 0) {
     perror("setsockopt reuseaddr");
     exit(EXIT_FAILURE);
   }
 
-  if (addr_sock_opt_port < 0) {
-    perror("setsockopt reuseport");
-    exit(EXIT_FAILURE);
-  }
   int binded = bind(sock_udp_fd, (struct sockaddr*)&server_addr, sizeof(struct sockaddr));
 
   if (binded == -1) {
@@ -116,6 +111,7 @@ int main(int argc, char** argv) {
   printf("RPC Server is now listening on port %d...\n", RPC_SERVER_PORT);
 
 READ:
+  // reset recv buffer
   serlib_reset_buffer(recv_buffer);
 
   // step 4
@@ -126,7 +122,7 @@ READ:
                  0, (struct sockaddr*)&client_addr,
                  &addr_len);
 
-  printf("RPC server replied with %d bytes\n", len);
+  printf("RPC server recieved %d bytes\n", len);
 
   serlib_reset_buffer(send_buffer);
 
@@ -140,9 +136,12 @@ READ:
               0, (struct sockaddr*)&client_addr,
               sizeof(struct sockaddr));
 
+  // free send / recv buffers
   //serlib_free_buffer(send_buffer);
   //serlib_free_buffer(recv_buffer);
-  //serlib_reset_buffer(recv_buffer);
+
+  // reset send buffer
+  serlib_reset_buffer(send_buffer);
 
   goto READ;
   
