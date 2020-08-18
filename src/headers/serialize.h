@@ -160,6 +160,20 @@ void serlib_deserialize_data_string(ser_buff_t* b, char* dest, int size);
 
 /*
  * ----------------------------------------------------------------------
+ * function: serlib_deserialize_data_int
+ * ----------------------------------------------------------------------
+ * params  :
+ *         > dest - int*
+ *         > b    - ser_buff_t*
+ *         > size - int
+ * ----------------------------------------------------------------------
+ * Deserializes a buffers' string buffer for an integer.
+ * ----------------------------------------------------------------------
+ */
+void serlib_deserialize_data_int(ser_buff_t* b, int* dest, int size);
+
+/*
+ * ----------------------------------------------------------------------
  * function: serlib_serialize_data_time_t
  * ----------------------------------------------------------------------
  * params  : b - ser_buff_t*

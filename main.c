@@ -11,8 +11,6 @@
 
 #define MULTIPLY_ID 55
 
-// yikes, dont do this kids
-//#define SO_REUSEPORT 15
 /*
  * RPC FUNCTIONS (MOCK / POC)
  */
@@ -32,8 +30,8 @@ int multiply(int a, int b) {
 int multiply_server_stub_unmarshal(ser_buff_t* recv_buffer) {
   int a,b;
 
-  serlib_deserialize_data_string((char*)&a, recv_buffer, sizeof(int));
-  serlib_deserialize_data_string((char*)&b, recv_buffer, sizeof(int));
+  serlib_deserialize_data_int(recv_buffer, (int*)&a, sizeof(int));
+  serlib_deserialize_data_int(recv_buffer, (int*)&b, sizeof(int));
 
   return multiply(a, b);
 };
@@ -121,7 +119,7 @@ READ:
                  0, (struct sockaddr*)&client_addr,
                  &addr_len);
 
-  printf("RPC server replied with %d bytes\n", len);
+  printf("RPC server recieved %d bytes\n", len);
 
   serlib_reset_buffer(send_buffer);
 
@@ -135,8 +133,8 @@ READ:
               0, (struct sockaddr*)&client_addr,
               sizeof(struct sockaddr));
 
-  //serlib_free_buffer(send_buffer);
-  //serlib_free_buffer(recv_buffer);
+  serlib_free_buffer(send_buffer);
+  serlib_free_buffer(recv_buffer);
   //serlib_reset_buffer(recv_buffer);
 
   goto READ;

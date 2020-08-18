@@ -237,6 +237,30 @@ void serlib_deserialize_data_string(ser_buff_t* b, char* dest, int size) {
 
 /*
  * ----------------------------------------------------------------------
+ * function: serlib_deserialize_data_int
+ * ----------------------------------------------------------------------
+ * params  :
+ *         > dest - int*
+ *         > b    - ser_buff_t*
+ *         > size - int
+ * ----------------------------------------------------------------------
+ * Deserializes a buffers' string buffer for an integer.
+ * ----------------------------------------------------------------------
+ */
+void serlib_deserialize_data_int(ser_buff_t* b, int* dest, int size) {
+  if (!b || !b->buffer) assert(0);
+  if (!size) return;
+  if ((b->size - b->next) < size) assert(0);
+
+  // copy data from dest to string buffer
+  memcpy(dest, (int*)b->buffer + b->next, size);
+
+  // increment the buffer's next pointer
+  b->next += size;
+};
+
+/*
+ * ----------------------------------------------------------------------
  * function: serlib_serialize_data_time_t
  * ----------------------------------------------------------------------
  * params  : b - ser_buff_t*
