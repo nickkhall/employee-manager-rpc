@@ -30,8 +30,8 @@ int multiply(int a, int b) {
 int multiply_server_stub_unmarshal(ser_buff_t* recv_buffer) {
   int a,b;
 
-  serlib_deserialize_data_int(recv_buffer, (int*)&a, sizeof(int));
-  serlib_deserialize_data_int(recv_buffer, (int*)&b, sizeof(int));
+  serlib_deserialize_data_string(recv_buffer, (char*)&a, sizeof(int));
+  serlib_deserialize_data_string(recv_buffer, (char*)&b, sizeof(int));
 
   return multiply(a, b);
 };
@@ -50,7 +50,9 @@ void rpc_server_process_msg(ser_buff_t* recv_buffer,
     exit(1);
   }
 
+  serlib_deserialize_data_string(recv_buffer, (char*)&rpc_ser_header->tid,          sizeof(rpc_ser_header->tid));
   serlib_deserialize_data_string(recv_buffer, (char*)&rpc_ser_header->rpc_proc_id,  sizeof(rpc_ser_header->rpc_proc_id));
+  serlib_deserialize_data_string(recv_buffer, (char*)&rpc_ser_header->msg_type,     sizeof(rpc_ser_header->msg_type));
   serlib_deserialize_data_string(recv_buffer, (char*)&rpc_ser_header->payload_size, sizeof(rpc_ser_header->payload_size));
 
   if (rpc_ser_header->rpc_proc_id == MULTIPLY_ID) {
