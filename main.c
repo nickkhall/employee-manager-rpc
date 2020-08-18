@@ -111,6 +111,7 @@ int main(int argc, char** argv) {
   printf("RPC Server is now listening on port %d...\n", RPC_SERVER_PORT);
 
 READ:
+  // reset recv buffer
   serlib_reset_buffer(recv_buffer);
 
   // step 4
@@ -135,9 +136,12 @@ READ:
               0, (struct sockaddr*)&client_addr,
               sizeof(struct sockaddr));
 
-  serlib_free_buffer(send_buffer);
-  serlib_free_buffer(recv_buffer);
-  //serlib_reset_buffer(recv_buffer);
+  // free send / recv buffers
+  //serlib_free_buffer(send_buffer);
+  //serlib_free_buffer(recv_buffer);
+
+  // reset send buffer
+  serlib_reset_buffer(send_buffer);
 
   goto READ;
   
