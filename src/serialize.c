@@ -385,25 +385,13 @@ list_node_t* serlib_deserialize_list_node_t(ser_buff_t* b) {
 
 /*
  * +--------------------------------------+
- * |                                      |
- * |                                      |
- * |                                      |
- * |                                      |
- * |                                      |
- * |                                      |
  * |          Generic Wrappers            |
- * |                                      |
- * |                                      |
- * |                                      |
- * |                                      |
- * |                                      |
- * |                                      |
  * +--------------------------------------+
  */
 
 /*
  * ----------------------------------------------------------------------
- * function: serlib_employee_t_wrapper
+ * function: serlib_serialize_employee_t_wrapper
  * ----------------------------------------------------------------------
  * params  : 
  *         > obj - void*
@@ -412,38 +400,26 @@ list_node_t* serlib_deserialize_list_node_t(ser_buff_t* b) {
  * Generic wrapper function for serializing an employee.
  * ----------------------------------------------------------------------
  */
-void serlib_employee_t_wrapper(void* obj, ser_buff_t* b) {
-  serlib_employee_t(obj, b);
+void serlib_serialize_employee_t_wrapper(void* obj, ser_buff_t* b) {
+  serlib_serialize_employee_t(obj, b);
 };
 
 /*
  * +--------------------------------------+
- * |                                      |
- * |                                      |
- * |                                      |
- * |                                      |
- * |                                      |
- * |                                      |
  * |          Employee Specific           |
- * |                                      |
- * |                                      |
- * |                                      |
- * |                                      |
- * |                                      |
- * |                                      |
  * +--------------------------------------+
  */
 
 /*
  * ----------------------------------------------------------------------
- * function: serlib_employee_t
+ * function: serlib_serialize_employee_t
  * ----------------------------------------------------------------------
  * params  : b - ser_buff_t*
  * ----------------------------------------------------------------------
  * Serializes an employee.
  * ----------------------------------------------------------------------
  */
-void serlib_employee_t(employee_t* employee, ser_buff_t* b) {
+void serlib_serialize_employee_t(employee_t* employee, ser_buff_t* b) {
   // if this is a sentinel section, return null
   unsigned int sentinel = 0xFFFFFFFF;
   if (!employee) {
