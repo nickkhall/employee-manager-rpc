@@ -8,12 +8,11 @@
 extern const char SEARCH_BY_ID_QUERY[];
 
 PGresult* empman_rpc_db_query(PGconn* conn,
-                  PGresult* res,
                   const char* query,
                   const char* const* queryParams,
                   const int num_of_queries);
 
-PGresult* empman_rpc_db_query_by_id(PGresult* res, const char* const* query_params);
+PGresult* empman_rpc_db_query_by_id(const char* const* query_params);
 
 void empman_rpc_db_clean_up(PGconn* conn, PGresult* res);
 

@@ -22,18 +22,17 @@ const char SEARCH_BY_ID_QUERY[] = "SELECT * FROM employees WHERE id = $1 OR firs
  * -----------------------------------------------------------------------------
  */
 PGresult* empman_rpc_db_query(PGconn* conn,
-                  PGresult* res,
                   const char* query,
                   const char* const* query_params,
                   const int num_of_queries)
 {
-  if (!conn || conn == NULL) {
-    printf("ERROR:: Failed to connect to postgres db.\n");
+  if (!conn) {
+    printf("ERROR:: RPC - Failed to connect to postgres db.\n");
     exit(1);
   }
 
-  PQclear(res);
-  res = PQexec(conn, "BEGIN");
+  //PGresult* res = (PGresult*) malloc(sizeof(struct PGresult));
+  PGresult* res = PQexec(conn, "BEGIN");
   if (PQresultStatus(res) != PGRES_COMMAND_OK) {
     PQclear(res);
     empman_rpc_db_disconnect(conn);
@@ -48,12 +47,21 @@ PGresult* empman_rpc_db_query(PGconn* conn,
                     NULL, 0);
 
   if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-    system("reset");
-    printf("ERROR:: %s\n", PQerrorMessage(conn));
+    printf("ERROR:: RPC - %s\n", PQerrorMessage(conn));
     PQclear(res);
     empman_rpc_db_disconnect(conn);
     exit(1);
   }
+
+  PGresult* response = (PGresult*) malloc(sizeof(res));
+  if (!response) {
+    printf("ERROR:: RPC - Failed to allocate memory for postgres response in empman_rpc_db_query\n");
+    empman_rpc_db_disconnect(conn);
+    free(query_params);
+    exit(1);
+  }
+
+  memcpy(response, res, sizeof(res));
 
   // disconnect from db
   empman_rpc_db_disconnect(conn);
@@ -71,25 +79,28 @@ PGresult* empman_rpc_db_query(PGconn* conn,
  * returns:  pointer to PGresult type
  * --------------------------------------------------------------------
  */
-PGresult* empman_rpc_db_query_by_id(PGresult* res, const char* const* query_params) {
+PGresult* empman_rpc_db_query_by_id(const char* const* query_params) {
+  // check for query params
+  if (!query_params) {
+    printf("ERROR:: RPC - Query params data is invalid in empman_rpc_db_query_by_id");
+    exit(1);
+  }
+
+  // connect to db
   PGconn* conn = PQconnectdb(SQL_INFO);
-  if (!conn || conn == NULL) {
-    printf("ERROR:: Failed to connect to postgres db.\n");
+  if (!conn) {
+    printf("ERROR:: RPC - Failed to connect to postgres db.\n");
     exit(1);
   }
 
-  if (!query_params || query_params == NULL) {
-    printf("ERROR:: Query data is invalid in empman_rpc_db_query_by_id");
-    empman_rpc_db_disconnect(conn);
-    exit(1);
-  }
+  // query db for employee
+  PGresult* res = empman_rpc_db_query(conn,
+                            SEARCH_BY_ID_QUERY,
+                            query_params, 1);
 
-  res = empman_rpc_db_query(conn,
-                res, SEARCH_BY_ID_QUERY,
-                query_params, 1);
-
-  if (!res || res == NULL) {
-    printf("ERROR:: Failed to get PQ response from empman_rpc_db_query in empman_rpc_db_query_by_id\n");
+  // check status of postman response
+  if (!res) {
+    printf("ERROR:: RPC - Failed to get PQ response from empman_rpc_db_query in empman_rpc_db_query_by_id\n");
     PQclear(res);
     free(res);
     empman_rpc_db_disconnect(conn);
@@ -109,23 +120,23 @@ PGresult* empman_rpc_db_query_by_id(PGresult* res, const char* const* query_para
 PGresult* empman_rpc_db_query_post(PGresult* res, const char* const* query_params) {
   PGconn* conn = PQconnectdb(SQL_INFO);
 
-  if (!conn || conn == NULL) {
-    printf("ERROR:: Failed to connect to postgres db\n");
+  if (!conn) {
+    printf("ERROR:: RPC - Failed to connect to postgres db\n");
     exit(1);
   }
 
-  if (!query_params || query_params == NULL) {
-    printf("ERROR:: Query data is invalid in empman_rpc_db_query_post");
+  if (!query_params) {
+    printf("ERROR:: RPC - Query data is invalid in empman_rpc_db_query_post");
     empman_rpc_db_disconnect(conn);
     exit(1);
   }
 
   res = empman_rpc_db_query(conn,
-                res, SEARCH_BY_ID_QUERY,
+                SEARCH_BY_ID_QUERY,
                 query_params, 1);
 
-  if (!res || res == NULL) {
-    printf("ERROR:: Failed to get PQ response from empman_rpc_db_query in empman_rpc_db_query_post\n");
+  if (!res) {
+    printf("ERROR:: RPC - Failed to get PQ response from empman_rpc_db_query in empman_rpc_db_query_post\n");
     PQclear(res);
     free(res);
     empman_rpc_db_disconnect(conn);
