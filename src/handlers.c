@@ -3,7 +3,7 @@
 void empman_rpc_handlers_employees_get_id(ser_buff_t* recv_buffer) {
   char* id;
   // deserialize request to get employee id
-  serlib_deserialize_data_string(recv_buffer, (char*)&id, sizeof(char*));
+  serlib_deserialize_data_string(recv_buffer, id, sizeof(char*));
   
   // query database with id
 
