@@ -8,6 +8,7 @@
 
 #include "src/headers/common.h"
 #include "src/headers/serialize.h"
+#include "src/headers/handlers.h"
 
 #define MULTIPLY_ID 55
 
@@ -55,10 +56,14 @@ void rpc_server_process_msg(ser_buff_t* recv_buffer,
   serlib_deserialize_data_string(recv_buffer, (char*)&rpc_ser_header->msg_type,     sizeof(rpc_ser_header->msg_type));
   serlib_deserialize_data_string(recv_buffer, (char*)&rpc_ser_header->payload_size, sizeof(rpc_ser_header->payload_size));
 
+  // @TODO: look into enums solution
   if (rpc_ser_header->rpc_proc_id == MULTIPLY_ID) {
-    int res = multiply_server_stub_unmarshal(recv_buffer);
+    // int res = multiply_server_stub_unmarshal(recv_buffer);
 
-    multiply_server_stub_marshal(res, send_buffer);
+    // multiply_server_stub_marshal(res, send_buffer);
+    
+
+    empman_rpc_handlers_employees_get_id(recv_buffer);
   }
 
   //printf("RPC - rpc_ser_header.rpc_proc_id: %d\n", rpc_ser_header->rpc_proc_id);
