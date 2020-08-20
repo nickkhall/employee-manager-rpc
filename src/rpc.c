@@ -61,7 +61,7 @@ int empman_rpc_process_traffic(ser_buff_t* recv_buffer, ser_buff_t* send_buffer)
 
   serlib_deserialize_data(recv_buffer, (char*)&rpc_ser_header->tid,          sizeof(rpc_ser_header->tid));
   serlib_deserialize_data(recv_buffer, (char*)&rpc_ser_header->rpc_proc_id,  sizeof(rpc_ser_header->rpc_proc_id));
-  serlib_deserialize_data(recv_buffer, (char*)&rpc_ser_header->rpc_call_id,     sizeof(rpc_ser_header->msg_type));
+  serlib_deserialize_data(recv_buffer, (char*)&rpc_ser_header->rpc_call_id,  sizeof(rpc_ser_header->rpc_call_id));
   serlib_deserialize_data(recv_buffer, (char*)&rpc_ser_header->payload_size, sizeof(rpc_ser_header->payload_size));
 
   // @TODO: update to use `rpc_call_id` instead of `rpc_proc_id`
@@ -78,15 +78,19 @@ int empman_rpc_process_traffic(ser_buff_t* recv_buffer, ser_buff_t* send_buffer)
 
 
 
-void empman_rpc_handle_traffic()
+int empman_rpc_handle_traffic()
 {
   // create client and server sockets
-  struct sockaddr_in* server_addr = (sockaddr_in*) malloc(sizeof(sockaddr_in));
+  struct sockaddr_in* server_addr = (struct sockaddr_in*) malloc(sizeof(struct sockaddr_in));
+  if (!server_addr) {
+    printf("ERROR:: - RPC - Failed to allocate memory for server socket in empman_rpc_handle_traffic\n");
+    return -1;
+  }
   struct sockaddr_in client_addr;
   int addr_len = sizeof(struct sockaddr);
 
   // initialize rpc sockets
-  int* sock_udp_fd = empman_rpc_init(server_addr);
+  int* sock_udp_fd = empman_rpc_init();
 
   // create and initialize send/recv buffers
   ser_buff_t* recv_buffer = NULL;
@@ -100,7 +104,7 @@ void empman_rpc_handle_traffic()
   int len = recvfrom(*sock_udp_fd, recv_buffer->buffer,
                      serlib_get_buffer_length(recv_buffer),
                      0, (struct sockaddr*)&client_addr,
-                     &addr_len);
+                     (socklen_t*)&addr_len);
 
   // print status
   printf("RPC server recieved %d bytes\n", len);
@@ -113,12 +117,14 @@ void empman_rpc_handle_traffic()
                             send_buffer);
 
   // send the serialized result to client
-  len = sendto(sock_udp_fd, send_buffer->buffer,
+  len = sendto(*sock_udp_fd, send_buffer->buffer,
               serlib_get_buffer_length(send_buffer),
               0, (struct sockaddr*)&client_addr,
               sizeof(struct sockaddr));
 
   // reset send buffer
   serlib_reset_buffer(send_buffer);
+
+  return 1;
 };
 

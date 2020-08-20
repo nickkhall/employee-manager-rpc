@@ -1,9 +1,10 @@
-#ifndef __EMP_MAN_REST_SERIALIZE_H__
-#define __EMP_MAN_REST_SERIALIZE_H__
+#ifndef __EMP_MAN_RPC_SERIALIZE_H__
+#define __EMP_MAN_RPC_SERIALIZE_H__
 
 #define SERIALIZE_BUFFER_DEFAULT_SIZE 100
 
-#include "rpc.h"
+#include <time.h>
+
 #include "common.h"
 
 typedef struct ser_buff_t {
@@ -15,7 +16,7 @@ typedef struct ser_buff_t {
 typedef struct ser_header_t {
   unsigned int tid;
   unsigned int rpc_proc_id;
-  empman_rpc_calls rpc_call_id;
+  unsigned int rpc_call_id;
   unsigned int payload_size;
 } ser_header_t;
 
@@ -78,7 +79,7 @@ void serlib_buffer_skip(ser_buff_t* b, unsigned long int skip_size);
  * Resets a buffer. (Sets ->next to 0)
  * ---------------------------------------------------
  */
-int serlib_reset_buffer(ser_buff_t* b);
+void serlib_reset_buffer(ser_buff_t* b);
 
 /*
  * ---------------------------------------------------

@@ -53,15 +53,20 @@ PGresult* empman_rpc_db_query(PGconn* conn,
     exit(1);
   }
 
+  int pq_size = 0;
+  for (int pq = 0; pq < PQnfields(res); pq++) {
+    pq_size += PQfsize(res, pq); 
+  }
+
   PGresult* response = (PGresult*) malloc(sizeof(res));
   if (!response) {
     printf("ERROR:: RPC - Failed to allocate memory for postgres response in empman_rpc_db_query\n");
     empman_rpc_db_disconnect(conn);
-    free(query_params);
+    free((char*)query_params);
     exit(1);
   }
 
-  memcpy(response, res, sizeof(res));
+  memcpy(response, res, pq_size);
 
   // disconnect from db
   empman_rpc_db_disconnect(conn);

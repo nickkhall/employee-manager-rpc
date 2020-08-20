@@ -45,97 +45,100 @@ void empman_rpc_employees_destroy(employee_t* employee);
 
 employee_t* empman_rpc_employees_convert(PGresult* res, const char* const* params, employee_t* employee);
 
+void empman_rpc_employees_get_id(ser_buff_t* recv_buffer);
+
 /*
  * ----------------------------------------------------------------------
- * function: serlib_list_t
+ * function: empman_rpc_employees_list_t
  * ----------------------------------------------------------------------
- * params  :
- *         > list - list_t*
- *         > b             - ser_buff_t*
+ * params  : b - ser_buff_t*
  * ----------------------------------------------------------------------
- * Serializes an employee list.
+ * Deserializes a buffers' employee_t buffer.
  * ----------------------------------------------------------------------
  */
-void serlib_list_t(list_t* list,
+void empman_rpc_employees_list_t(list_t* list,
                              ser_buff_t* b,
                              void(*serialize_fn_ptr)(void*, ser_buff_t* b));
 
 /*
  * ----------------------------------------------------------------------
- * function: serlib_deserialize_list_t
+ * function: empman_rpc_employees_deserialize_list_t
  * ----------------------------------------------------------------------
  * params  : b - ser_buff_t*
  * ----------------------------------------------------------------------
- * Deserializes an employee list.
+ * Deserializes a employee list.
  * ----------------------------------------------------------------------
  */
-
-list_t* serlib_deserialize_list_t(ser_buff_t* b);
+list_t* empman_rpc_employees_deserialize_list_t(ser_buff_t* b);
 
 /*
  * ----------------------------------------------------------------------
- * function: serlib_list_node_t
- * ----------------------------------------------------------------------
- * params  : 
- *         > list_node - list_node_t*
- *         > b                  - ser_buff_t*
- * ----------------------------------------------------------------------
- * Serializes an employee list node.
- * ----------------------------------------------------------------------
- */
-void serlib_list_node_t(list_node_t* list_node,
-                                  ser_buff_t* b,
-                                  void (*serialize_fn_ptr)(void*, ser_buff_t* b));
-
-/*
- * ----------------------------------------------------------------------
- * function: serlib_deserialize_list_node_t
+ * function: empman_rpc_employees_list_node_t
  * ----------------------------------------------------------------------
  * params  : b - ser_buff_t*
  * ----------------------------------------------------------------------
- * Deerializes a employee list node.
+ * Serializes a employee list node.
  * ----------------------------------------------------------------------
  */
-list_node_t* serlib_deserialize_list_node_t(ser_buff_t* b);
+void empman_rpc_employees_list_node_t(list_node_t* list_node, ser_buff_t* b, void (*serialize_fn_ptr)(void*, ser_buff_t* b));
 
 /*
  * ----------------------------------------------------------------------
- * function: empman_rpc_employees_wrapper_deserialize_list
+ * function: empman_rpc_employees_deserialize_list_node_t
+ * ----------------------------------------------------------------------
+ * params  : b - ser_buff_t*
+ * ----------------------------------------------------------------------
+ * Deserializes a employee list node.
+ * ----------------------------------------------------------------------
+ */
+list_node_t* empman_rpc_employees_deserialize_list_node_t(ser_buff_t* b);
+
+/*
+ * +--------------------------------------+
+ * |          Generic Wrappers            |
+ * +--------------------------------------+
+ */
+
+/*
+ * ----------------------------------------------------------------------
+ * function: empman_rpc_employees_serialize_employee_t_wrapper
  * ----------------------------------------------------------------------
  * params  : 
  *         > obj - void*
  *         > b   - ser_buff_t*
  * ----------------------------------------------------------------------
- * Deerializes a employee list node.
+ * Generic wrapper function for serializing an employee.
  * ----------------------------------------------------------------------
  */
-void empman_rpc_employees_wrapper_deserialize_list(void* obj, ser_buff_t* b);
+void empman_rpc_employees_serialize_employee_t_wrapper(void* obj, ser_buff_t* b);
+
+/*
+ * +--------------------------------------+
+ * |          Employee Specific           |
+ * +--------------------------------------+
+ */
 
 /*
  * ----------------------------------------------------------------------
- * function: empman_rpc_employees_t
+ * function: empman_rpc_employees_serialize_employee_t
  * ----------------------------------------------------------------------
- * params  :
- *         > employee - employee_t*
- *         > b        - ser_buff_t*
+ * params  : b - ser_buff_t*
  * ----------------------------------------------------------------------
- * Serializes a employee_t.
+ * Serializes an employee.
  * ----------------------------------------------------------------------
  */
-void empman_rpc_employees_wrapper_serialize_emp(employee_t* employee, ser_buff_t* b);
+void empman_rpc_employees_serialize_employee_t(employee_t* employee, ser_buff_t* b);
 
 /*
  * ----------------------------------------------------------------------
- * function: empman_rpc_employeesdeserialize_employee_t
+ * function: empman_rpc_employees_deserialize_employee_t
  * ----------------------------------------------------------------------
- * params  : 
- *         > employee - employee_t*
- *         > b        - ser_buff_t*
+ * params  : b - ser_buff_t*
  * ----------------------------------------------------------------------
- * Deserializes a employee_t.
+ * Deserializes an employee.
  * ----------------------------------------------------------------------
  */
-employee_t* empman_rpc_employees_deserialize_emp(ser_buff_t* b);
+employee_t* empman_rpc_employees_deserialize_employee_t(ser_buff_t* b);
 
 #endif
 
