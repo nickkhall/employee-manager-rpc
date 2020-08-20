@@ -180,3 +180,29 @@ void empman_rpc_db_clean_up(PGconn* conn, PGresult* res) {
   PQclear(res);
   empman_rpc_db_disconnect(conn);
 };
+
+/*
+ * ------------------------------------------
+ * function: empman_rpc_db_convert_pq_data
+ * ------------------------------------------
+ * params  : 
+ *          > conn - pointer to PGconn type
+ *          > res  - pointer to PGresult type
+ * ------------------------------------------
+ * Destroys a response,
+ * and a connection to a database
+ * ------------------------------------------
+ */
+char** empman_rpc_db_convert_pq_data(char** data_pointer, PGresult* res, const int row) {
+  for (int col = 0; col < 11; col++) {
+    const char* current_pq = PQgetvalue(res, row, col);
+    unsigned long int current_pq_length = strlen(current_pq);
+    char* current_string = (char*) malloc(sizeof(char) * (current_pq_length + 1));
+
+    strcpy(current_string, current_pq);
+    *(data_pointer + col) = current_string;
+ }
+
+  return data_pointer;
+};
+

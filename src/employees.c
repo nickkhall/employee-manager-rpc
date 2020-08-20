@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <libpq-fe.h>
 
-#include "headers/serialize.h"
 #include "headers/employees.h"
+#include "headers/serialize.h"
 #include "headers/db.h"
 
 void empman_rpc_employees_get_id(ser_buff_t* recv_buffer) {
@@ -25,16 +25,31 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer) {
     exit(1);
   }
 
-  // @HERE: WIP, need to create linked list with new generic linked list type
+  int rows = PQntuples(db_response); 
+  int cols = PQnfields(db_response);
+
+  char*** data = (char***) malloc(sizeof(char*) * rows); 
+  if (!data) {
+    printf("ERROR:: RPC - Failed to allocate memory for data for postgres response in empman_rpc_employees_get_id\n");
+    free((char*)id);
+    free(recv_buffer);
+    // @TODO: add app clean up function to clean up memory
+    exit(1);
+  }
   // convert db response into data
-  int rows = PQntuples(res); 
   for (int r = 0; r < rows; r++) {
-    empman_rpc_db_convert_pq_data(*(employee);
+    *(data + r) = (char**) malloc(sizeof(char*) * cols);
+    if (!*(data + r)) {
+      printf("ERROR:: RPC - Failed to allocate memory for data transfer in empman_rpc_employees_get_id\n");
+      free(data);
+      exit(1);
+    }
+
+    empman_rpc_db_convert_pq_data(*(data + r), db_response, r);
   }
 
   
   // convert data into employee linked list
-
 
 
   // serialize employees linked list   
@@ -60,12 +75,6 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer) {
 void empman_rpc_employees_serialize_employee_t_wrapper(void* obj, ser_buff_t* b) {
   empman_rpc_employees_serialize_employee_t(obj, b);
 };
-
-/*
- * +--------------------------------------+
- * |          Employee Specific           |
- * +--------------------------------------+
- */
 
 /*
  * ----------------------------------------------------------------------
