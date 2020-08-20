@@ -3,8 +3,6 @@
 
 #include <libpq-fe.h>
 
-#include "employee.h"
-
 extern const char SEARCH_BY_ID_QUERY[];
 
 PGresult* empman_rpc_db_query(PGconn* conn,
