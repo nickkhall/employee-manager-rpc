@@ -104,14 +104,14 @@ void empman_rpc_employees_serialize_employee_t(employee_t* employee, ser_buff_t*
 
 /*
  * ----------------------------------------------------------------------
- * function: empman_rpc_employees_deserialize_employee_t
+ * function: empman_rpc_employees_deserialize_list_t
  * ----------------------------------------------------------------------
  * params  : b - ser_buff_t*
  * ----------------------------------------------------------------------
  * Deserializes an employee.
  * ----------------------------------------------------------------------
  */
-employee_t* empman_rpc_employees_deserialize_employee_t(ser_buff_t* b) {
+employee_t* empman_rpc_employees_deserialize_list_t(ser_buff_t* b) {
   unsigned int sentinel = 0;
 
   serlib_serialize_data(b, (char*)&sentinel, sizeof(unsigned int));

@@ -13,12 +13,12 @@ typedef struct ser_buff_t {
   int next;
 } ser_buff_t;
 
-typedef struct {
+typedef struct list_node_t {
   void* data;
   struct list_node_t* next;
 } list_node_t;
 
-typedef struct {
+typedef struct list_t {
   struct list_node_t* head;
 } list_t;
 
@@ -197,5 +197,52 @@ void serlib_serialize_data_time_t(time_t* dest, ser_buff_t*b, int size);
  * ----------------------------------------------------------------------
  */
 void serlib_deserialize_data_time_t(time_t* dest, ser_buff_t*b, int size);
+
+
+/*
+ * ----------------------------------------------------------------------
+ * function: serlib_serialize_list_t
+ * ----------------------------------------------------------------------
+ * params  : b - ser_buff_t*
+ * ----------------------------------------------------------------------
+ * Serializes a list.
+ * ----------------------------------------------------------------------
+ */
+void serlib_serialize_list_t(list_t* list,
+                             ser_buff_t* b,
+                             void(*serialize_fn_ptr)(void*, ser_buff_t* b));
+
+/*
+ * ----------------------------------------------------------------------
+ * function: serlib_deserialize_list_t
+ * ----------------------------------------------------------------------
+ * params  : b - ser_buff_t*
+ * ----------------------------------------------------------------------
+ * Deserializes a list.
+ * ----------------------------------------------------------------------
+ */
+list_t* serlib_deserialize_list_t(ser_buff_t* b, void (*serialize_fn_ptr)(void *, ser_buff_t*));
+
+/*
+ * ----------------------------------------------------------------------
+ * function: serlib_serialize_list_node_t
+ * ----------------------------------------------------------------------
+ * params  : b - ser_buff_t*
+ * ----------------------------------------------------------------------
+ * Serializes a list node.
+ * ----------------------------------------------------------------------
+ */
+void serlib_serialize_list_node_t(list_node_t* list_node, ser_buff_t* b, void (*serialize_fn_ptr)(void*, ser_buff_t* b));
+
+/*
+ * ----------------------------------------------------------------------
+ * function: serlib_deserialize_list_node_t
+ * ----------------------------------------------------------------------
+ * params  : b - ser_buff_t*
+ * ----------------------------------------------------------------------
+ * Deserializes a list node.
+ * ----------------------------------------------------------------------
+ */
+list_node_t* serlib_deserialize_list_node_t(ser_buff_t* b, void (*serialize_fn_ptr)(void *, ser_buff_t*));
 
 #endif
