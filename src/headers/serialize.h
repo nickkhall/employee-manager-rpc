@@ -13,6 +13,15 @@ typedef struct ser_buff_t {
   int next;
 } ser_buff_t;
 
+typedef struct {
+  void* data;
+  struct list_node_t* next;
+} list_node_t;
+
+typedef struct {
+  struct list_node_t* head;
+} list_t;
+
 typedef struct ser_header_t {
   unsigned int tid;
   unsigned int rpc_proc_id;
@@ -127,7 +136,7 @@ void serlib_free_buffer(ser_buff_t* b);
 
 /*
  * ------------------------------------------------------------------------
- * function: serlib_serialize_data_string
+ * function: serlib_serialize_data
  * ------------------------------------------------------------------------
  * params  : 
  *           > b      - ser_buff_t**
@@ -137,7 +146,7 @@ void serlib_free_buffer(ser_buff_t* b);
  * Serializes string data to a given valid serialized string buffer.
  * ------------------------------------------------------------------------
  */
-void serlib_serialize_data_string(ser_buff_t* b, char* data, int nbytes);
+void serlib_serialize_data(ser_buff_t* b, char* data, int nbytes);
 
 /*
  * ----------------------------------------------------------------------

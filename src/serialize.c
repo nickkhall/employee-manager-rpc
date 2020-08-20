@@ -282,3 +282,103 @@ void serlib_serialize_data_time_t(time_t* dest, ser_buff_t*b, int size) {
 void serlib_deserialize_data_time_t(time_t* dest, ser_buff_t*b, int size) {
 };
 
+/*
+ * ----------------------------------------------------------------------
+ * function: serlib_serialize_list_t
+ * ----------------------------------------------------------------------
+ * params  : b - ser_buff_t*
+ * ----------------------------------------------------------------------
+ * Deserializes a buffers' employee_t buffer.
+ * ----------------------------------------------------------------------
+ */
+void serlib_serialize_list_t(list_t* list,
+                             ser_buff_t* b,
+                             void(*serialize_fn_ptr)(void*, ser_buff_t* b))
+{
+  // if this is a sentinel section, return null
+  if (!list) {
+    unsigned int sentinel = 0xFFFFFFFF;
+    serlib_serialize_data(b, (char*)&sentinel, sizeof(unsigned int));
+    return;
+  }
+
+  serlib_serialize_list_node_t(list->head, b, serialize_fn_ptr);
+};
+
+/*
+ * ----------------------------------------------------------------------
+ * function: serlib_deserialize_list_t
+ * ----------------------------------------------------------------------
+ * params  : b - ser_buff_t*
+ * ----------------------------------------------------------------------
+ * Deserializes a employee list.
+ * ----------------------------------------------------------------------
+ */
+list_t* serlib_deserialize_list_t(ser_buff_t* b) {
+  // set sentintal to default
+  unsigned int sentinel = 0;
+
+  // unmarshall buffer to check for sentinel
+  serlib_serialize_data(b, (char*)&sentinel,  sizeof(unsigned long int));
+
+  // if this is a sentinel section, return null
+  if (sentinel == 0xFFFFFFFF) {
+    return NULL;
+  }
+
+  list_t* list = calloc(1, sizeof(list_t));
+  list->head = serlib_deserialize_list_node_t(b);
+
+  return list;
+};
+
+/*
+ * ----------------------------------------------------------------------
+ * function: serlib_serialize_list_node_t
+ * ----------------------------------------------------------------------
+ * params  : b - ser_buff_t*
+ * ----------------------------------------------------------------------
+ * Serializes a employee list node.
+ * ----------------------------------------------------------------------
+ */
+void serlib_serialize_list_node_t(list_node_t* list_node, ser_buff_t* b, void (*serialize_fn_ptr)(void*, ser_buff_t* b))
+{
+  // if this is a sentinel section, return null
+  if (!list_node) {
+    unsigned int sentinel = 0xFFFFFFFF;
+    serlib_serialize_data(b, (char*)&sentinel, sizeof(unsigned int));
+    return;
+  }
+
+  serialize_fn_ptr(list_node->data, b);
+  serlib_serialize_list_node_t(list_node->next, b, serialize_fn_ptr);
+};
+
+/*
+ * ----------------------------------------------------------------------
+ * function: serlib_deserialize_list_node_t
+ * ----------------------------------------------------------------------
+ * params  : b - ser_buff_t*
+ * ----------------------------------------------------------------------
+ * Deserializes a employee list node.
+ * ----------------------------------------------------------------------
+ */
+list_node_t* serlib_deserialize_list_node_t(ser_buff_t* b) {
+  // set sentintal to default
+  unsigned int sentinel = 0;
+
+  // unmarshall buffer to check for sentinel
+  serlib_serialize_data(b, (char*)&sentinel, sizeof(unsigned int));
+
+  // if this is a sentinel section, return null
+  if (sentinel == 0xFFFFFFFF) {
+    return NULL;
+  }
+
+  list_node_t* list_node = calloc(1, sizeof(list_node_t));
+  
+  list_node->data = serlib_deserialize_employee_t(b);
+  list_node->next = serlib_deserialize_list_node_t(b);
+
+  return list_node;
+};

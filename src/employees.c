@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <libpq-fe.h>
 
+#include "headers/serialize.h"
 #include "headers/employees.h"
 #include "headers/db.h"
-#include "headers/serialize.h"
 
 void empman_rpc_employees_get_id(ser_buff_t* recv_buffer) {
   // deserialize header to increment next counter for employee data deserialization
@@ -38,106 +38,6 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer) {
 
 
   // serialize employees linked list   
-};
-
-/*
- * ----------------------------------------------------------------------
- * function: empman_rpc_employees_list_t
- * ----------------------------------------------------------------------
- * params  : b - ser_buff_t*
- * ----------------------------------------------------------------------
- * Deserializes a buffers' employee_t buffer.
- * ----------------------------------------------------------------------
- */
-void empman_rpc_employees_list_t(list_t* list,
-                             ser_buff_t* b,
-                             void(*serialize_fn_ptr)(void*, ser_buff_t* b))
-{
-  // if this is a sentinel section, return null
-  if (!list) {
-    unsigned int sentinel = 0xFFFFFFFF;
-    serlib_serialize_data(b, (char*)&sentinel, sizeof(unsigned int));
-    return;
-  }
-
-  empman_rpc_employees_list_node_t(list->head, b, serialize_fn_ptr);
-};
-
-/*
- * ----------------------------------------------------------------------
- * function: empman_rpc_employees_deserialize_list_t
- * ----------------------------------------------------------------------
- * params  : b - ser_buff_t*
- * ----------------------------------------------------------------------
- * Deserializes a employee list.
- * ----------------------------------------------------------------------
- */
-list_t* empman_rpc_employees_deserialize_list_t(ser_buff_t* b) {
-  // set sentintal to default
-  unsigned int sentinel = 0;
-
-  // unmarshall buffer to check for sentinel
-  serlib_serialize_data(b, (char*)&sentinel,  sizeof(unsigned long int));
-
-  // if this is a sentinel section, return null
-  if (sentinel == 0xFFFFFFFF) {
-    return NULL;
-  }
-
-  list_t* list = calloc(1, sizeof(list_t));
-  list->head = empman_rpc_employees_deserialize_list_node_t(b);
-
-  return list;
-};
-
-/*
- * ----------------------------------------------------------------------
- * function: empman_rpc_employees_list_node_t
- * ----------------------------------------------------------------------
- * params  : b - ser_buff_t*
- * ----------------------------------------------------------------------
- * Serializes a employee list node.
- * ----------------------------------------------------------------------
- */
-void empman_rpc_employees_list_node_t(list_node_t* list_node, ser_buff_t* b, void (*serialize_fn_ptr)(void*, ser_buff_t* b)) {
-  // if this is a sentinel section, return null
-  if (!list_node) {
-    unsigned int sentinel = 0xFFFFFFFF;
-    serlib_serialize_data(b, (char*)&sentinel, sizeof(unsigned int));
-    return;
-  }
-
-  serialize_fn_ptr(list_node->data, b);
-  empman_rpc_employees_list_node_t(list_node->next, b, serialize_fn_ptr);
-};
-
-/*
- * ----------------------------------------------------------------------
- * function: empman_rpc_employees_deserialize_list_node_t
- * ----------------------------------------------------------------------
- * params  : b - ser_buff_t*
- * ----------------------------------------------------------------------
- * Deserializes a employee list node.
- * ----------------------------------------------------------------------
- */
-list_node_t* empman_rpc_employees_deserialize_list_node_t(ser_buff_t* b) {
-  // set sentintal to default
-  unsigned int sentinel = 0;
-
-  // unmarshall buffer to check for sentinel
-  serlib_serialize_data(b, (char*)&sentinel, sizeof(unsigned int));
-
-  // if this is a sentinel section, return null
-  if (sentinel == 0xFFFFFFFF) {
-    return NULL;
-  }
-
-  list_node_t* list_node = calloc(1, sizeof(list_node_t));
-  
-  list_node->data = empman_rpc_employees_deserialize_employee_t(b);
-  list_node->next = empman_rpc_employees_deserialize_list_node_t(b);
-
-  return list_node;
 };
 
 /*
