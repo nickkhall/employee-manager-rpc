@@ -115,6 +115,8 @@ int socklib_socket_send_to(int* sockfd, const void* buffer,
     // for now, just terminate application
     exit(1);
   }
+
+  return res;
 };
 
 /*

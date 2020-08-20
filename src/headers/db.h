@@ -16,5 +16,19 @@ void empman_rpc_db_clean_up(PGconn* conn, PGresult* res);
 
 void empman_rpc_db_disconnect(PGconn* conn);
 
+/*
+ * ------------------------------------------
+ * function: empman_rpc_db_convert_pq_data
+ * ------------------------------------------
+ * params  : 
+ *          > conn - pointer to PGconn type
+ *          > res  - pointer to PGresult type
+ * ------------------------------------------
+ * Destroys a response,
+ * and a connection to a database
+ * ------------------------------------------
+ */
+char** empman_rpc_db_convert_pq_data(char** data_pointer, PGresult* res, const int row);
+
 #endif
 
