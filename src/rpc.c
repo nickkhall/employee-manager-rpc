@@ -30,7 +30,7 @@ int* empman_rpc_init() {
                                                                  AF_INET,
                                                                  RPC_SERVER_PORT);
   // bind to rpc port
-  int binded = bind(*sock_udp_fd, (struct sockaddr*)&server_addr, sizeof(struct sockaddr_in*));
+  int binded = bind(*sock_udp_fd, (struct sockaddr*) &*server_addr, sizeof(struct sockaddr));
   if (binded == -1) {
     printf("RPC ERROR:: Failed to bind to socket\n");
     exit(1);
