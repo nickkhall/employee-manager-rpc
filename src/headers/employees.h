@@ -22,8 +22,6 @@ typedef struct _employee_t {
   int* salary;
 } employee_t;
 
-void empman_rpc_employees_get_id(ser_buff_t* recv_buffer);
-
 employee_t* empman_rpc_employees_push(employee_t* employee, char** data);
 
 employee_t* empman_rpc_employees_populate(employee_t* employee, char** data);
@@ -36,7 +34,7 @@ void empman_rpc_employees_destroy(employee_t* employee);
 
 employee_t* empman_rpc_employees_convert(PGresult* res, const char* const* params, employee_t* employee);
 
-void empman_rpc_employees_get_id(ser_buff_t* recv_buffer);
+void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffer);
 
 /*
  * +--------------------------------------+

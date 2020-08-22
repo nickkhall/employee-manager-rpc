@@ -5,7 +5,7 @@
 #include "headers/serialize.h"
 #include "headers/db.h"
 
-void empman_rpc_employees_get_id(ser_buff_t* recv_buffer) {
+void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffer) {
   // deserialize header to increment next counter for employee data deserialization
   //serlib_deserialize_data(recv_buffer, (char*));
 
@@ -48,11 +48,13 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer) {
     empman_rpc_db_convert_pq_data(*(data + r), db_response, r);
   }
 
+  // create employee linked list with db response data
+  employee_t* employee = (employee_t*) malloc(sizeof(employee_t));
   
   // convert data into employee linked list
+  empman_rpc_employees_serialize_employee_t_wrapper(employee, send_buffer, empman_rpc_employees_serialize_employee_t); 
 
-
-  // serialize employees linked list   
+  // serialize employees linked list
 };
 
 /*
@@ -85,7 +87,8 @@ void empman_rpc_employees_serialize_employee_t_wrapper(void* obj, ser_buff_t* b)
  * Serializes an employee.
  * ----------------------------------------------------------------------
  */
-void empman_rpc_employees_serialize_employee_t(employee_t* employee, ser_buff_t* b) {
+void empman_rpc_employees_serialize_employee_t(employee_t* employee, ser_buff_t* b)
+{
   // if this is a sentinel section, return null
   unsigned int sentinel = 0xFFFFFFFF;
   if (!employee) {

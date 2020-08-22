@@ -69,7 +69,7 @@ int empman_rpc_process_traffic(ser_buff_t** recv_buffer, ser_buff_t** send_buffe
   // @TODO: update to use `rpc_call_id` instead of `rpc_proc_id`
   switch (rpc_ser_header->rpc_proc_id) {
     case EMP_MAN_RPC_EMPLOYEES_GET_ID:
-      empman_rpc_employees_get_id(*recv_buffer);
+      empman_rpc_employees_get_id(*recv_buffer, *send_buffer);
       break;
     default:
       break;

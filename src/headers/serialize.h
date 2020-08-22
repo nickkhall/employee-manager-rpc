@@ -19,7 +19,11 @@ typedef struct _list_node_t {
 } list_node_t;
 
 typedef struct _list_t {
+  int logical_length;
+  int elem_size;
   list_node_t* head;
+  list_node_t* tail;
+  void (*freeFn) (void*);
 } list_t;
 
 typedef struct _ser_header_t {
