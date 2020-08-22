@@ -93,15 +93,15 @@ int empman_rpc_handle_traffic()
   int* sock_udp_fd = empman_rpc_init();
 
   // create and initialize send/recv buffers
-  ser_buff_t* recv_buffer = NULL;
-  ser_buff_t* send_buffer = NULL;
+  ser_buff_t* recv_buffer = (ser_buff_t*) malloc(MAX_RECV_BUFF_SIZE);
+  ser_buff_t* send_buffer = (ser_buff_t*) malloc(MAX_RECV_BUFF_SIZE);
   empman_rpc_init_buffers(recv_buffer, send_buffer);
 
   // reset recv buffer
   serlib_reset_buffer(recv_buffer);
 
   // recv data from request into local buffer
-  int len = recvfrom(*sock_udp_fd, recv_buffer->buffer,
+  int len = recvfrom(*sock_udp_fd, &recv_buffer->buffer,
                      serlib_get_buffer_length(recv_buffer),
                      0, (struct sockaddr*)&client_addr,
                      (socklen_t*)&addr_len);

@@ -43,7 +43,7 @@ typedef struct client_param_t {
  * Initializes the serialized buffer type.
  * ------------------------------------------------------
  */
-void serlib_init_buffer(ser_buff_t** b);
+void serlib_init_buffer(ser_buff_t* b);
 
 /*
  * ------------------------------------------------------
