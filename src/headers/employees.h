@@ -8,7 +8,7 @@
 
 extern const char* employee_labels_mini[];
 
-typedef struct {
+typedef struct _employee_t {
   char* id;
   char* first;
   char* last;

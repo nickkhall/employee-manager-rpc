@@ -53,7 +53,7 @@ void empman_rpc_init_buffers(ser_buff_t** recv_buffer, ser_buff_t** send_buffer)
 
 int empman_rpc_process_traffic(ser_buff_t** recv_buffer, ser_buff_t** send_buffer)
 {
-  ser_header_t* rpc_ser_header = (ser_header_t*) malloc(sizeof(struct ser_header_t));
+  ser_header_t* rpc_ser_header = (ser_header_t*) malloc(sizeof(ser_header_t));
   if (!rpc_ser_header) {
     printf("ERROR:: RPC - Failed to allocate memory for rpc_ser_header\n");
     free(recv_buffer);

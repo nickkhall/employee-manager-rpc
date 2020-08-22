@@ -7,29 +7,29 @@
 
 #include "common.h"
 
-typedef struct ser_buff_t {
+typedef struct _ser_buff_t {
   char* buffer;
   int size;
   int next;
 } ser_buff_t;
 
-typedef struct list_node_t {
+typedef struct _list_node_t {
   void* data;
-  struct list_node_t* next;
+  struct _list_node_t* next;
 } list_node_t;
 
-typedef struct list_t {
-  struct list_node_t* head;
+typedef struct _list_t {
+  list_node_t* head;
 } list_t;
 
-typedef struct ser_header_t {
+typedef struct _ser_header_t {
   unsigned int tid;
   unsigned int rpc_proc_id;
   unsigned int rpc_call_id;
   unsigned int payload_size;
 } ser_header_t;
 
-typedef struct client_param_t {
+typedef struct _client_param_t {
   unsigned int recv_buff_size;
   ser_buff_t*  recv_ser_b;
 } client_param_t;
@@ -210,7 +210,7 @@ void serlib_deserialize_data_time_t(time_t* dest, ser_buff_t*b, int size);
  */
 void serlib_serialize_list_t(list_t* list,
                              ser_buff_t* b,
-                             void(*serialize_fn_ptr)(void*, ser_buff_t* b));
+                             void (* serialize_fn_ptr)(void *, ser_buff_t*));
 
 /*
  * ----------------------------------------------------------------------
