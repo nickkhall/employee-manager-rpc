@@ -11,6 +11,8 @@
 #include "headers/employees.h"
 #include "headers/sockets.h"
 
+#define EMP_MAN_RPC_EMPLOYEES_GET_ID 55
+
 int* empman_rpc_init() {
   // create socket
   int* sock_udp_fd = (int*) malloc(sizeof(int));
@@ -42,14 +44,14 @@ int* empman_rpc_init() {
   return sock_udp_fd;
 };
 
-void empman_rpc_init_buffers(ser_buff_t* recv_buffer, ser_buff_t* send_buffer)
+void empman_rpc_init_buffers(ser_buff_t** recv_buffer, ser_buff_t** send_buffer)
 {
-  serlib_init_buffer_of_size(&send_buffer, MAX_RECV_BUFF_SIZE);
-  serlib_init_buffer_of_size(&recv_buffer, MAX_RECV_BUFF_SIZE);
+  serlib_init_buffer_of_size(send_buffer, MAX_RECV_BUFF_SIZE);
+  serlib_init_buffer_of_size(recv_buffer, MAX_RECV_BUFF_SIZE);
 };
 
 
-int empman_rpc_process_traffic(ser_buff_t* recv_buffer, ser_buff_t* send_buffer)
+int empman_rpc_process_traffic(ser_buff_t** recv_buffer, ser_buff_t** send_buffer)
 {
   ser_header_t* rpc_ser_header = (ser_header_t*) malloc(sizeof(struct ser_header_t));
   if (!rpc_ser_header) {
@@ -59,15 +61,15 @@ int empman_rpc_process_traffic(ser_buff_t* recv_buffer, ser_buff_t* send_buffer)
     return -1;
   }
 
-  serlib_deserialize_data(recv_buffer, (char*)&rpc_ser_header->tid,          sizeof(rpc_ser_header->tid));
-  serlib_deserialize_data(recv_buffer, (char*)&rpc_ser_header->rpc_proc_id,  sizeof(rpc_ser_header->rpc_proc_id));
-  serlib_deserialize_data(recv_buffer, (char*)&rpc_ser_header->rpc_call_id,  sizeof(rpc_ser_header->rpc_call_id));
-  serlib_deserialize_data(recv_buffer, (char*)&rpc_ser_header->payload_size, sizeof(rpc_ser_header->payload_size));
+  serlib_deserialize_data(*recv_buffer, (char*)&rpc_ser_header->tid,          sizeof(rpc_ser_header->tid));
+  serlib_deserialize_data(*recv_buffer, (char*)&rpc_ser_header->rpc_proc_id,  sizeof(rpc_ser_header->rpc_proc_id));
+  serlib_deserialize_data(*recv_buffer, (char*)&rpc_ser_header->rpc_call_id,  sizeof(rpc_ser_header->rpc_call_id));
+  serlib_deserialize_data(*recv_buffer, (char*)&rpc_ser_header->payload_size, sizeof(rpc_ser_header->payload_size));
 
   // @TODO: update to use `rpc_call_id` instead of `rpc_proc_id`
   switch (rpc_ser_header->rpc_proc_id) {
     case EMP_MAN_RPC_EMPLOYEES_GET_ID:
-      empman_rpc_employees_get_id(recv_buffer);
+      empman_rpc_employees_get_id(*recv_buffer);
       break;
     default:
       break;
@@ -93,16 +95,16 @@ int empman_rpc_handle_traffic()
   int* sock_udp_fd = empman_rpc_init();
 
   // create and initialize send/recv buffers
-  ser_buff_t* recv_buffer = (ser_buff_t*) malloc(MAX_RECV_BUFF_SIZE);
-  ser_buff_t* send_buffer = (ser_buff_t*) malloc(MAX_RECV_BUFF_SIZE);
+  ser_buff_t** recv_buffer = (ser_buff_t**) malloc(MAX_RECV_BUFF_SIZE);
+  ser_buff_t** send_buffer = (ser_buff_t**) malloc(MAX_RECV_BUFF_SIZE);
   empman_rpc_init_buffers(recv_buffer, send_buffer);
 
   // reset recv buffer
-  serlib_reset_buffer(recv_buffer);
+  serlib_reset_buffer(*recv_buffer);
 
   // recv data from request into local buffer
-  int len = recvfrom(*sock_udp_fd, &recv_buffer->buffer,
-                     serlib_get_buffer_length(recv_buffer),
+  int len = recvfrom(*sock_udp_fd, &(*(*recv_buffer)->buffer),
+                     serlib_get_buffer_length(*recv_buffer),
                      0, (struct sockaddr*)&client_addr,
                      (socklen_t*)&addr_len);
 
@@ -110,20 +112,20 @@ int empman_rpc_handle_traffic()
   printf("RPC server recieved %d bytes\n", len);
 
   // reset send buffer
-  serlib_reset_buffer(send_buffer);
+  serlib_reset_buffer(*send_buffer);
 
   // process request
   empman_rpc_process_traffic(recv_buffer,
                             send_buffer);
 
   // send the serialized result to client
-  len = sendto(*sock_udp_fd, send_buffer->buffer,
-              serlib_get_buffer_length(send_buffer),
+  len = sendto(*sock_udp_fd, &((*send_buffer)->buffer),
+              serlib_get_buffer_length(*send_buffer),
               0, (struct sockaddr*)&client_addr,
               sizeof(struct sockaddr));
 
   // reset send buffer
-  serlib_reset_buffer(send_buffer);
+  serlib_reset_buffer(*send_buffer);
 
   return 1;
 };

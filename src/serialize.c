@@ -16,7 +16,7 @@
  */
 void serlib_init_buffer(ser_buff_t* b) {
   // create memory for serialized buffer type
-  b = (ser_buff_t*) calloc(1, sizeof(ser_buff_t));
+  b = (ser_buff_t*) malloc(sizeof(ser_buff_t));
   if (!b) {
     printf("ERROR:: RPC - Failed to allocate memory for ser buffer in serlib_init_buffer\n");
     // @TODO : create clean up function for app, memory, etc.
@@ -24,7 +24,7 @@ void serlib_init_buffer(ser_buff_t* b) {
   }
 
   // create memory for serialized buffer's buffer
-  b->buffer = calloc(1, SERIALIZE_BUFFER_DEFAULT_SIZE);
+  b->buffer = malloc(SERIALIZE_BUFFER_DEFAULT_SIZE);
   if (!b->buffer) {
     printf("ERROR:: RPC - Failed to allocate memory for ser buffer's buffer in serlib_init_buffer\n");
     // @TODO : create clean up function for app, memory, etc.
@@ -53,14 +53,14 @@ void serlib_init_buffer_of_size(ser_buff_t** b, int size) {
     free(*b);
     exit(1);
   }
-  (*b) = (ser_buff_t*) calloc(1, sizeof(ser_buff_t));
+  (*b) = (ser_buff_t*) malloc(sizeof(ser_buff_t));
   if (!(*b)) {
     printf("ERROR:: RPC - Failed to allocate memory for ser buffer in serlib_init_buffer_of_size\n");
     // @TODO : create clean up function for app, memory, etc.
     exit(1);
   }
 
-  (*b)->buffer = calloc(1, size);
+  (*b)->buffer = malloc(size);
   if (!(*b)->buffer) {
     printf("ERROR:: RPC - Failed to allocate memory for ser buffer's buffer in serlib_init_buffer_of_size\n");
     // @TODO : create clean up function for app, memory, etc.
