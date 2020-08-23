@@ -54,12 +54,55 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
     exit(1);
   }
 
-  empman_utils_list_new(employees, rows, NULL); 
+  // create generic employees linked list
+  empman_utils_list_new(employees, sizeof(employee_t) * rows, NULL); 
+
+  // iterate through number of employees from response,
+  // and create an employee_t employee
+  // and append it to the generic list
+  for (int r = 0; r < rows; r++) {
+    employee_t* employee = (employee_t*) malloc(sizeof(employee_t));
+    employee = empman_rpc_employees_employee_create(*(data + r));
+
+    empman_utils_list_append(employees, employee);
+  }
+
   // create employees generic linked list
   serlib_serialize_list_t(employees, send_buffer, (void*) empman_rpc_employees_serialize_employee_t);
   
   // serialize employees linked list
 };
+
+employee_t* empman_rpc_employees_employee_create(char** data) {
+  if (!data) {
+    printf("ERROR:: RPC - Invalid pointer for data in empman_rpc_employees_employee_create\n");
+    exit(1);
+  }
+
+  employee_t* employee = (employee_t*) malloc(sizeof(employee_t));
+  if (!employee) {
+    for (int d = 0; d < 11; d++) {
+      printf("ERROR:: RPC - Failed to allocate memory for employee in empman_rpc_employees_employee_create\n");
+      free(*(data + d));
+      free(data);
+      exit(1);
+    }
+  }
+
+  employee->id =        (char*) *data;
+  employee->first =     (char*) *(data + 1);
+  employee->last =      (char*) *(data + 2);
+  employee->email =     (char*) *(data + 3);
+  employee->address =   (char*) *(data + 4);
+  employee->phone =     (char*) *(data + 5);
+  employee->start =     (time_t) *(data + 6);
+  employee->ethnicity = (char*) *(data + 7);
+  employee->gender =    (char*) *(data + 8);
+  employee->title =     (char*) *(data + 9);
+  employee->salary =    (int*) (*(data + 10));
+
+  return employee;
+}
 
 /*
  * +--------------------------------------+

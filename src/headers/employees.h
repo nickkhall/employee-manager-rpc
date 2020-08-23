@@ -34,6 +34,8 @@ void empman_rpc_employees_destroy(employee_t* employee);
 
 employee_t* empman_rpc_employees_convert(PGresult* res, const char* const* params, employee_t* employee);
 
+employee_t* empman_rpc_employees_employee_create(char** data);
+
 void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffer);
 
 /*
