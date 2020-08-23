@@ -41,7 +41,7 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
     empman_rpc_db_convert_pq_data(*(data + r), db_response, r);
   }
 
-  // create employee linked list with db response data
+  // create memory for employee linked list
   list_t* employees = (list_t*) malloc(sizeof(list_t));
   if (!employees) {
     printf("ERROR:: RPC - Failed to allocate memory for employees in empman_rpc_employees_get_id\n");
@@ -67,12 +67,16 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
     empman_utils_list_append(employees, employee);
   }
 
-  // create employees generic linked list
+  // serialize generic employee linked list into send buffer
   serlib_serialize_list_t(employees, send_buffer, (void*) empman_rpc_employees_serialize_employee_t);
-  
-  // serialize employees linked list
 };
 
+/*
+ *
+ *
+ *
+ *
+ */
 employee_t* empman_rpc_employees_employee_create(char** data) {
   if (!data) {
     printf("ERROR:: RPC - Invalid pointer for data in empman_rpc_employees_employee_create\n");

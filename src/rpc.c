@@ -102,7 +102,7 @@ int empman_rpc_handle_traffic()
   // reset recv buffer
   serlib_reset_buffer(*recv_buffer);
 
-  // recv data from request into local buffer
+  // receive data from request into local buffer
   int len = recvfrom(*sock_udp_fd, &(*(*recv_buffer)->buffer),
                      serlib_get_buffer_length(*recv_buffer),
                      0, (struct sockaddr*)&client_addr,
