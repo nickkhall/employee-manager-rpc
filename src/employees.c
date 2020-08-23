@@ -4,6 +4,7 @@
 #include "headers/employees.h"
 #include "headers/serialize.h"
 #include "headers/db.h"
+#include "headers/utils.h"
 
 void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffer) {
   // deserialize header to increment next counter for employee data deserialization
@@ -16,14 +17,6 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
   // query database with id
   const char* const* query_params = &id;
   PGresult* db_response = empman_rpc_db_query_by_id(query_params);
-
-  // create memory for employees linked list
-  list_t* employees = (list_t*) malloc(sizeof(list_t));
-  if (!employees) {
-    printf("ERROR:: RPC - Failed to allocate memory for employess linked list in empman_rpc_handlers_employees_get_id\n");
-    free(recv_buffer);
-    exit(1);
-  }
 
   int rows = PQntuples(db_response); 
   int cols = PQnfields(db_response);
@@ -49,11 +42,22 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
   }
 
   // create employee linked list with db response data
-  employee_t* employee = (employee_t*) malloc(sizeof(employee_t));
-  
-  // convert data into employee linked list
-  empman_rpc_employees_serialize_employee_t_wrapper(employee, send_buffer, empman_rpc_employees_serialize_employee_t); 
+  list_t* employees = (list_t*) malloc(sizeof(list_t));
+  if (!employees) {
+    printf("ERROR:: RPC - Failed to allocate memory for employees in empman_rpc_employees_get_id\n");
+    for (int i = 0; i < 11; i++) {
+      free(*(data + i));
+    }
 
+    free(data);
+    free(recv_buffer);
+    exit(1);
+  }
+
+  empman_utils_list_new(employees, rows, NULL); 
+  // create employees generic linked list
+  serlib_serialize_list_t(employees, send_buffer, (void*) empman_rpc_employees_serialize_employee_t);
+  
   // serialize employees linked list
 };
 

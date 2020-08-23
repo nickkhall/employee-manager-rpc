@@ -1,7 +1,10 @@
 #ifndef __EMP_MAN_RPC_UTILS_H__
 #define __EMP_MAN_RPC_UTILS_H__
 
+#include <stdbool.h>
 #include <libpq-fe.h>
+
+#include "serialize.h"
 
 char* empman_rpc_utils_trim_whitespaces(char* str);
 
@@ -14,7 +17,7 @@ char* empman_rpc_utils_trim_whitespaces(char* str);
  *
  * ------------------------------------------------------
  */
-empman_utils_list_new(list_t* list, int elem_size, void (*freeFn)(void *);
+void empman_utils_list_new(list_t* list, int elem_size, void (*freeFn)(void *));
 
 /*
  * ------------------------------------------------------
@@ -25,7 +28,7 @@ empman_utils_list_new(list_t* list, int elem_size, void (*freeFn)(void *);
  *
  * ------------------------------------------------------
  */
-empman_utils_list_destroy(list_t* list);
+void empman_utils_list_destroy(list_t* list);
 
 /*
  * ------------------------------------------------------
@@ -36,7 +39,7 @@ empman_utils_list_destroy(list_t* list);
  *
  * ------------------------------------------------------
  */
-empman_utils_list_prepend(list_t* list);
+void empman_utils_list_prepend(list_t* list, void* element);
 
 /*
  * ------------------------------------------------------
@@ -47,7 +50,7 @@ empman_utils_list_prepend(list_t* list);
  *
  * ------------------------------------------------------
  */
-empman_utils_list_append(list_t* list);
+void empman_utils_list_append(list_t* list, void* element);
 
 /*
  * ------------------------------------------------------
@@ -58,7 +61,7 @@ empman_utils_list_append(list_t* list);
  *
  * ------------------------------------------------------
  */
-empman_utils_list_get_size(list_t* list);
+int empman_utils_list_get_size(list_t* list);
 
 /*
  * ------------------------------------------------------
@@ -69,7 +72,7 @@ empman_utils_list_get_size(list_t* list);
  *
  * ------------------------------------------------------
  */
-empman_utils_list_iterate(list_t* list, bool (*list_iterator)(void *));
+void empman_utils_list_iterate(list_t* list, bool (*list_iterator)(void *));
 
 /*
  * ------------------------------------------------------
@@ -80,7 +83,7 @@ empman_utils_list_iterate(list_t* list, bool (*list_iterator)(void *));
  *
  * ------------------------------------------------------
  */
-empman_utils_list_get_head(list_t* list, void* element, bool should_remove);
+void empman_utils_list_get_head(list_t* list, void* element, bool should_remove);
 
 /*
  * ------------------------------------------------------
@@ -91,7 +94,7 @@ empman_utils_list_get_head(list_t* list, void* element, bool should_remove);
  *
  * ------------------------------------------------------
  */
-empman_utils_list_get_tail(list_t* list, void* element);
+void empman_utils_list_get_tail(list_t* list, void* element);
 
 #endif
 
