@@ -55,7 +55,7 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
   }
 
   // create generic employees linked list
-  empman_utils_list_new(employees, sizeof(employee_t) * rows, NULL); 
+  empman_utils_list_new(employees, sizeof(employee_t), NULL); 
 
   // iterate through number of employees from response,
   // and create an employee_t employee

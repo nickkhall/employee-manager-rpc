@@ -51,14 +51,14 @@ void empman_rpc_init_buffers(ser_buff_t** recv_buffer, ser_buff_t** send_buffer)
 };
 
 
-int empman_rpc_process_traffic(ser_buff_t** recv_buffer, ser_buff_t** send_buffer)
+void empman_rpc_process_traffic(ser_buff_t** recv_buffer, ser_buff_t** send_buffer)
 {
   ser_header_t* rpc_ser_header = (ser_header_t*) malloc(sizeof(ser_header_t));
   if (!rpc_ser_header) {
     printf("ERROR:: RPC - Failed to allocate memory for rpc_ser_header\n");
     free(recv_buffer);
     free(send_buffer);
-    return -1;
+    exit(1);
   }
 
   serlib_deserialize_data(*recv_buffer, (char*)&rpc_ser_header->tid,          sizeof(rpc_ser_header->tid));
@@ -74,19 +74,17 @@ int empman_rpc_process_traffic(ser_buff_t** recv_buffer, ser_buff_t** send_buffe
     default:
       break;
   }
-
-  return 0;
 };
 
 
 
-int empman_rpc_handle_traffic()
+void empman_rpc_handle_traffic()
 {
   // create client and server sockets
   struct sockaddr_in* server_addr = (struct sockaddr_in*) malloc(sizeof(struct sockaddr_in));
   if (!server_addr) {
     printf("ERROR:: - RPC - Failed to allocate memory for server socket in empman_rpc_handle_traffic\n");
-    return -1;
+    exit(1);
   }
   struct sockaddr_in client_addr;
   int addr_len = sizeof(struct sockaddr);
@@ -126,7 +124,5 @@ int empman_rpc_handle_traffic()
 
   // reset send buffer
   serlib_reset_buffer(*send_buffer);
-
-  return 1;
 };
 
