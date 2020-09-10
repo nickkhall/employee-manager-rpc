@@ -117,7 +117,7 @@ void empman_rpc_handle_traffic()
                             send_buffer);
 
   // send the serialized result to client
-  len = sendto(*sock_udp_fd, &((*send_buffer)->buffer),
+  len = sendto(*sock_udp_fd, (*send_buffer)->buffer,
               serlib_get_buffer_length(*send_buffer),
               0, (struct sockaddr*)&client_addr,
               sizeof(struct sockaddr));
