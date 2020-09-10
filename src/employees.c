@@ -86,7 +86,7 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
   ser_header->payload_size = 0;
 
   // serialize generic employee linked list into send buffer
-  serlib_serialize_list_t(employees, send_buffer, (void*) empman_rpc_employees_serialize_employee_t);
+  serlib_serialize_list_t(employees, send_buffer, (void*) empman_rpc_employees_serialize_employee_t_wrapper);
 
   // now that we have payload size
   // resume serialized header shite
@@ -198,8 +198,8 @@ void empman_rpc_employees_serialize_employee_t(employee_t* employee, ser_buff_t*
   serlib_serialize_data(b, (char*)employee->address,   sizeof(char) * 76);
   serlib_serialize_data(b, (char*)employee->phone,     sizeof(char) * 51);
   serlib_serialize_data(b, (char*)employee->start,     sizeof(time_t));
-  serlib_serialize_data(b, (char*)employee->gender,    sizeof(char) * 7);
   serlib_serialize_data(b, (char*)employee->ethnicity, sizeof(char) * 51);
+  serlib_serialize_data(b, (char*)employee->gender,    sizeof(char) * 7);
   serlib_serialize_data(b, (char*)employee->title,     sizeof(char) * 51);
 
   if (employee->salary) {
