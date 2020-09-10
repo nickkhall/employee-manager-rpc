@@ -72,17 +72,39 @@ void serlib_init_buffer_of_size(ser_buff_t** b, int size) {
 
 /*
  * ------------------------------------------------------
- * function: serlib_get_header_size
+ * function: serlib_header_get_size
  * ------------------------------------------------------
  * Returns size of serialized header.
  * ------------------------------------------------------
  */
-unsigned int serlib_get_header_size(void) {
+unsigned int serlib_header_get_size(void) {
   ser_header_t ser_header;
   return (sizeof(ser_header.tid)
          + sizeof(ser_header.rpc_proc_id)
          + sizeof(ser_header.rpc_call_id)
          + sizeof(ser_header.payload_size));
+};
+
+/*
+ * ------------------------------------------------------
+ * function: serlib_header_init
+ * ------------------------------------------------------
+ * Returns size of serialized header.
+ * ------------------------------------------------------
+ */
+ser_header_t* serlib_header_init(int tid, int rpc_proc_id, int rpc_call_id, int payload_size) {
+  ser_header_t* ser_header = (ser_header_t*) malloc(sizeof(ser_header_t));
+  if (!ser_header) {
+    printf("ERROR:: REST - Failed to allocate memory for serialized header\n");
+    exit(1);
+  }
+
+  ser_header->tid = tid;
+  ser_header->rpc_proc_id = rpc_proc_id;
+  ser_header->rpc_call_id = rpc_call_id;
+  ser_header->payload_size = payload_size;
+
+  return ser_header;
 };
 
 /*
@@ -150,14 +172,14 @@ int serlib_get_buffer_data_size(ser_buff_t* b) {
 
 /*
  * -----------------------------------------------------
- * function: serlib_copy_in_buffer_by_size
+ * function: serlib_copy_in_buffer_by_offset
  * -----------------------------------------------------
  * params  : b - ser_buff_t*
  * -----------------------------------------------------
  * 
  * -----------------------------------------------------
  */
-void serlib_copy_in_buffer_by_size(ser_buff_t* client_send_ser_buffer, int size, char* value, int offset) {
+void serlib_copy_in_buffer_by_offset(ser_buff_t* client_send_ser_buffer, int size, char* value, int offset) {
   if (offset > client_send_ser_buffer->size) {
     printf("%s(): ERROR:: REST - Attempted to write outside of buffer limits\n", __FUNCTION__);
     return;

@@ -67,8 +67,52 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
     empman_utils_list_append(employees, employee);
   }
 
+  // @TODO: REFACTOR / ABSTRACT [POC MODE]
+  // create serialized header
+  // serialized header shite
+  int SERIALIZED_HDR_SIZE = sizeof(ser_header_t); // temporary
+  serlib_buffer_skip(send_buffer, SERIALIZED_HDR_SIZE);
+
+  ser_header_t* ser_header = (ser_header_t*) malloc(sizeof(ser_header_t));
+  if (!ser_header) {
+    printf("ERROR:: REST - Failed to allocate memory for serialized header\n");
+    free(send_buffer);
+    exit(1);
+  }
+
+  ser_header->tid = 10;
+  ser_header->rpc_proc_id = 55;
+  ser_header->rpc_call_id = 3;
+  ser_header->payload_size = 0;
+
   // serialize generic employee linked list into send buffer
   serlib_serialize_list_t(employees, send_buffer, (void*) empman_rpc_employees_serialize_employee_t);
+
+  // now that we have payload size
+  // resume serialized header shite
+  ser_header->payload_size = serlib_get_buffer_data_size(send_buffer) - SERIALIZED_HDR_SIZE;
+
+  serlib_copy_in_buffer_by_offset(send_buffer,
+                                sizeof(ser_header->tid),
+                                (char*)&ser_header->tid,
+                                0); 
+
+  serlib_copy_in_buffer_by_offset(send_buffer,
+                                sizeof(ser_header->rpc_proc_id),
+                                (char*)&ser_header->rpc_proc_id,
+                                sizeof(ser_header->tid)); 
+
+  serlib_copy_in_buffer_by_offset(send_buffer,
+                                sizeof(ser_header->rpc_call_id),
+                                (char*)&ser_header->rpc_call_id,
+                                sizeof(ser_header->tid) + sizeof(ser_header->rpc_proc_id)); 
+
+  serlib_copy_in_buffer_by_offset(send_buffer,
+                                sizeof(ser_header->payload_size),
+                                (char*)&ser_header->payload_size,
+                                (sizeof(ser_header->rpc_call_id)
+                                + sizeof(ser_header->tid)
+                                + sizeof(ser_header->rpc_proc_id))); 
 };
 
 /*
