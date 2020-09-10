@@ -1,5 +1,5 @@
-#ifndef __EMP_MAN_RPC_SERIALIZE_H__
-#define __EMP_MAN_RPC_SERIALIZE_H__
+#ifndef __SERLIB_SERIALIZE_H__
+#define __SERLIB_SERIALIZE_H__
 
 #define SERIALIZE_BUFFER_DEFAULT_SIZE 100
 
@@ -226,15 +226,17 @@ void serlib_serialize_list_t(list_t* list,
                              void (* serialize_fn_ptr)(void *, ser_buff_t*));
 
 /*
- * ----------------------------------------------------------------------
+ * ------------------------------------------------------------------------------
  * function: serlib_deserialize_list_t
- * ----------------------------------------------------------------------
- * params  : b - ser_buff_t*
- * ----------------------------------------------------------------------
- * Deserializes a list.
- * ----------------------------------------------------------------------
+ * ------------------------------------------------------------------------------
+ * params  :
+ *         > b                - ser_buff_t*
+ *         > serialize_fn_ptr - function pointer to function (void*, ser_buff_t*)
+ * ------------------------------------------------------------------------------
+ * Deserializes a employee list.
+ * ------------------------------------------------------------------------------
  */
-list_t* serlib_deserialize_list_t(ser_buff_t* b, void (*serialize_fn_ptr)(void *, ser_buff_t*));
+void serlib_deserialize_list_t(ser_buff_t* b, void (*serialize_fn_ptr)(void *, ser_buff_t*));
 
 /*
  * ----------------------------------------------------------------------
