@@ -364,7 +364,7 @@ void serlib_serialize_list_t(list_t* list,
  * Deserializes a employee list.
  * ------------------------------------------------------------------------------
  */
-void serlib_deserialize_list_t(ser_buff_t* b, void (*serialize_fn_ptr)(void *, ser_buff_t*)) {
+list_t* serlib_deserialize_list_t(ser_buff_t* b, void (*serialize_fn_ptr)(void *, ser_buff_t*)) {
   // set sentintal to default
   unsigned int sentinel = 0;
 
@@ -373,11 +373,13 @@ void serlib_deserialize_list_t(ser_buff_t* b, void (*serialize_fn_ptr)(void *, s
 
   // if this is a sentinel section, return null
   if (sentinel == 0xFFFFFFFF) {
-    return;
+    return NULL;
   }
 
   list_t* list = calloc(1, sizeof(list_t));
   list->head = serlib_deserialize_list_node_t(b, serialize_fn_ptr);
+
+  return list;
 };
 
 /*
