@@ -8,9 +8,10 @@ BIN = employee-manager-rpc
 BUILD_DIR = bin
 POSTGRES = /usr/include/postgresql
 
-LIBS = -lpq
+LIBS = -lpq -llibserc
+LIBS_DIR = /usr/lib
 INCLUDES_DIR = /usr/include
-INCLUDES = -I$(INCLUDES_DIR) -I$(POSTGRES)
+INCLUDES = -I$(INCLUDES_DIR) -I$(LIBS_DIR) -I$(POSTGRES)
 CFLAGS = -std=c18 -Wall
 
 # All .c source files
