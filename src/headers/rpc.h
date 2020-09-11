@@ -11,9 +11,9 @@ int* empman_rpc_init();
 
 void empman_rpc_init_buffers(ser_buff_t** recv_buffer, ser_buff_t** send_buffer);
 
-int empman_rpc_process_traffic(ser_buff_t** recv_buffer, ser_buff_t** send_buffer);
+void empman_rpc_process_traffic(ser_buff_t** recv_buffer, ser_buff_t** send_buffer);
 
-int empman_rpc_handle_traffic();
+void empman_rpc_handle_traffic();
 
 #endif
 
