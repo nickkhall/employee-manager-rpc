@@ -95,22 +95,13 @@ $(_BDIR)/$(_PROJ): $(OBJS)
 	echo -e "OBJS = $(OBJS)"
 	echo -e "------------------------------------------------------------------------------------------------------------"
 	echo -e ""
-	echo -e "Employee Manager RPC: compling object file: ${CYAN}$<${NC} from command ${PURPLE}$@${NC}"
+	echo -e "Employee Manager RPC: compling object files:\n${CYAN}$^${NC}\n  -- from command ${PURPLE}$@${NC}"
 	echo -e ""
 	echo -e "------------------------------------------------------------------------------------------------------------"
 	echo -e ""
-	echo -e "Compiling with:"
-	echo -e "Compiler        - $(_CC)"
-	echo -e "Compiler Flags  - $(CARGS)"
-	echo -e "Compiler Output - $@"
-	echo -e "Current file    - $^"
-	echo -e ""
-	echo -e "------------------------------------------------------------------------------------------------------------"
-	echo -e ""
-
 	$(_CC) -o $@ $^ $(CARGS) && \
 	echo -e "Employee Manager RPC: successfully built executable ${CYAN}$@${NC}"
-
+	echo -e ""
 	echo -e "------------------------------------------------------------------------------------------------------------"
 
 # Compile all outdated source files into their respective object files
