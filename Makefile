@@ -79,7 +79,8 @@ HEDRS   = $(shell find $(_HDIR) -print | grep .$(_HSUF))
 
 # A list of object files on which their existing source files depend
 OBJS    = $(shell find $(_SDIR) -print | grep .$(_SSUF) | \
-                  sed -r "s/($(_SDIR))\/(.*)\.($(_SSUF))/$(_BDIR)\/obj\/\2\.o/")
+                  sed -r "s/($(_SDIR))\/(.*)\.($(_SSUF))/$(_BDIR)\/obj\/\2\.o/" | \
+		  sed -r "s/src//")
 
 ##### Dependency Rules ############################################################################
 
@@ -91,11 +92,12 @@ all: $(_BDIR)/$(_PROJ)
 
 # Link all compiled object files
 $(_BDIR)/$(_PROJ): $(OBJS)
-	echo -e "----------------------------------------------------------------------------------------"
+	echo -e "OBJS = $(OBJS)"
+	echo -e "------------------------------------------------------------------------------------------------------------"
 	echo -e ""
 	echo -e "Employee Manager RPC: compling object file: ${CYAN}$<${NC} from command ${PURPLE}$@${NC}"
 	echo -e ""
-	echo -e "----------------------------------------------------------------------------------------"
+	echo -e "------------------------------------------------------------------------------------------------------------"
 	echo -e ""
 	echo -e "Compiling with:"
 	echo -e "Compiler        - $(_CC)"
@@ -103,18 +105,18 @@ $(_BDIR)/$(_PROJ): $(OBJS)
 	echo -e "Compiler Output - $@"
 	echo -e "Current file    - $^"
 	echo -e ""
-	echo -e "----------------------------------------------------------------------------------------"
+	echo -e "------------------------------------------------------------------------------------------------------------"
 	echo -e ""
 
-	$(_CC) $(CARGS) -o $@ $^ && \
+	$(_CC) -o $@ $^ $(CARGS) && \
 	echo -e "Employee Manager RPC: successfully built executable ${CYAN}$@${NC}"
 
-	echo -e "----------------------------------------------------------------------------------------"
+	echo -e "------------------------------------------------------------------------------------------------------------"
 
 # Compile all outdated source files into their respective object files
 $(_BDIR)/obj/%.o: $(_SDIR)/%.$(_SSUF) $(HEDRS) | $(_BDIR)
-	echo -e "Employee Manager RPC: compiling source file ${PURPLE}$<${NC}" && \
-	$(_CC) $(CARGS) -c -o $@ $<
+	echo -e "Employee Manager RPC: compiling source file ${PURPLE}$<${NC}\n  -- Object File: $@\n" && \
+	$(_CC) -c $< -o $@ $(CARGS)
 
 # Ensure target folders for binaries exist and run any additional user defined shell script
 $(_BDIR):
@@ -127,5 +129,5 @@ run: $(_BDIR)/$(_PROJ)
 
 # Delete all binaries and any editor backups of source and header files
 clean:
-	echo -e "Employee Manager RPC: cleaning up" && \
+	echo -e "Employee Manager RPC: cleaning up...\n" && \
 	rm -rf $(_BDIR) $(_SDIR)/*~ $(_HDIR)/*~
