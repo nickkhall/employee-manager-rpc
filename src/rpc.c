@@ -7,10 +7,10 @@
 #include <netdb.h>
 #include "serialize.h"
 
-#include "headers/common.h"
-#include "headers/rpc.h"
-#include "headers/employees.h"
-#include "headers/sockets.h"
+#include "../include/common.h"
+#include "../include/rpc.h"
+#include "../include/employees.h"
+#include "../include/sockets.h"
 
 #define EMP_MAN_RPC_EMPLOYEES_GET_ID 55
 

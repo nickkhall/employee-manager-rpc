@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <libpq-fe.h>
+#include "serialize.h"
 
-#include "headers/employees.h"
-#include "headers/serialize.h"
-#include "headers/db.h"
-#include "headers/utils.h"
+#include "../include/employees.h"
+#include "../include/db.h"
+#include "../include/utils.h"
 
 void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffer) {
   // deserialize header to increment next counter for employee data deserialization

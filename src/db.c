@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <libpq-fe.h>
 
-#include "headers/postgres_info.h"
-#include "headers/db.h"
+#include "../include/postgres_info.h"
+#include "../include/db.h"
 
 const char SEARCH_BY_ID_QUERY[] = "SELECT * FROM employees WHERE id = $1 OR first = $1 OR last = $1";
 

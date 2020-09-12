@@ -5,9 +5,9 @@
 #include <ctype.h>
 #include <string.h>
 #include <assert.h>
+#include "serialize.h"
 
-#include "headers/utils.h"
-#include "headers/serialize.h"
+#include "../include/utils.h"
 
 char* empman_rpc_utils_trim_whitespaces(char* str) {
   char* end;

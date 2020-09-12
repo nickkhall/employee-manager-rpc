@@ -6,8 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "headers/sockets.h"
-#include "headers/common.h"
+#include "../include/sockets.h"
+#include "../include/common.h"
 
 /*
  * -------------------------------------------
