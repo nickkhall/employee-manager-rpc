@@ -64,7 +64,7 @@ _LIBS     = -lpq -lserc -llibserc
 _LIBS_DIR = -L/usr/local/lib
 _SCRIPT   = :#                               # Any shell script to run before build (replace ':')
 SHELL     = /bin/bash#                       # Shell to be used by makefile
-CARGS     = -I $(_HDIR) -I$(_PSQL) \
+CARGS     = -I $(_HDIR) -I$(_PSQL) -I/usr/include \
 						$(LIBS_DIR) $(LIBS) $(_CFLAGS)#  # Full set of compiler arguments
 PURPLE    = \033[0;35m#                      # Encoding of purple color for terminal output
 CYAN      = \033[0;36m#                      # Encoding of cyan color for terminal output
@@ -99,7 +99,7 @@ $(_BDIR)/$(_PROJ): $(OBJS)
 # Compile all outdated source files into their respective object files
 $(_BDIR)/obj/%.o: $(_SDIR)/%.$(_SSUF) $(HEDRS) | $(_BDIR)
 	echo -e "Employee Manager RPC: compiling source file ${PURPLE}$<${NC}" && \
-	$(_CC) -c -o $@ $< $(CARGS)
+	$(_CC) $(CARGS) -c -o $@ $<
 
 # Ensure target folders for binaries exist and run any additional user defined shell script
 $(_BDIR):

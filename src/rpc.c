@@ -5,9 +5,10 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include "serialize.h"
 
+#include "headers/common.h"
 #include "headers/rpc.h"
-#include "headers/serialize.h"
 #include "headers/employees.h"
 #include "headers/sockets.h"
 
