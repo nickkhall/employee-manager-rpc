@@ -28,8 +28,8 @@ HEDRS   = $(shell find $(_HDIR) -print | grep .$(_HSUF))
 
 # A list of object files on which their existing source files depend
 OBJS    = $(shell find $(_SDIR) -print | grep .$(_SSUF) | \
-                  sed -r "s/($(_SDIR))\/(.*)\.($(_SSUF))/$(_BDIR)\/obj\/\2\.o/" | \
-		  sed -r "s/src//")
+			sed -r "s/($(_SDIR))\/(.*)\.($(_SSUF))/$(_BDIR)\/obj\/\2\.o/" | \
+			sed -r "s/src//")
 
 ##### Dependency Rules ############################################################################
 
