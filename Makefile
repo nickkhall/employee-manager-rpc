@@ -9,7 +9,7 @@ _HSUF     = h#                               # Suffix of header files
 _CC       = gcc#                             # Compiler to be used
 _CFLAGS   = -std=c11 -Wall -Werror#          # Compilation flags
 _PSQL     = /usr/include/postgresql
-_LIBS     = -lpq -lserc
+_LIBS     = -lpq -lserc -ldbc -lsockc
 _LIBS_DIR = -L/usr/local/lib
 _SCRIPT   = :#                               # Any shell script to run before build (replace ':')
 SHELL     = /bin/bash#                       # Shell to be used by makefile

@@ -1,9 +1,10 @@
 #include <stdlib.h>
 #include <libpq-fe.h>
 #include "serialize.h"
+#include "db.h"
 
 #include "../include/employees.h"
-#include "../include/db.h"
+#include "../include/postgres_info.h"
 #include "../include/utils.h"
 
 void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffer) {
@@ -16,7 +17,7 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
  
   // query database with id
   const char* const* query_params = &id;
-  PGresult* db_response = empman_rpc_db_query_by_id(query_params);
+  PGresult* db_response = libdbc_db_query_by_id(query_params, SQL_INFO);
 
   int rows = PQntuples(db_response); 
   int cols = PQnfields(db_response);
@@ -38,7 +39,7 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
       exit(1);
     }
 
-    empman_rpc_db_convert_pq_data(*(data + r), db_response, r);
+    libdbc_db_convert_pq_data(*(data + r), db_response, r);
   }
 
   // create memory for employee linked list
