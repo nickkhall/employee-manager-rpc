@@ -23,6 +23,7 @@ _DEBUG_DIR   = debug#                               # Debug directory
 _DEBUG_EXE   = $(_DEBUG_DIR)/debug#                 # Debug executable name
 _DEBUG_FLAGS = -g#                                  # Debug flags
 _DEBUG_PORT  = 12347#                               # Debug port
+_DEBUG_CONF  = $(_DEBUG_DIR)/debug_conf.gdb
 
 ##### File Lists ##################################################################################
 
@@ -42,7 +43,7 @@ OPTS =
 
 ##### Dependency Rules ############################################################################
 
-.PHONY: all run clean debug
+.PHONY: all run clean debug gdb_debug gdb_debugger 
 .SILENT: $(_BDIR)/$(_PROJ) $(OBJS) $(_BDIR) run clean
 
 # Default
@@ -89,6 +90,11 @@ $(_DEBUG_EXE): $(OBJS)
 $(_DEBUG_DIR)/%.o: %.c
 	$(_CC) $(_DEBUG_FLAGS) -c $< -o $(_DEBUG_DIR)/$@ $(_CARGS)
 
+# GDB debug exectubale
+gdb_debug:	
+	gdb -x $(_DEBUG_CONF)
+
 # GDB debugger server
 gdb_debugger:	
-	gdbserver localhost:$(DEBUG_PORT) debug/debug
+	$(shell tmux splitw -h "gdbserver localhost:$(_DEBUG_PORT) $(_DEBUG_EXE)") 
+	echo "Employee Manager RPC: Debugging on port $(_DEBUG_PORT)..."
