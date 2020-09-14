@@ -21,7 +21,7 @@ NC        = \033[0m#                                # Encoding of no color for t
 
 _DEBUG_DIR   = debug#                               # Debug directory
 _DEBUG_EXE   = $(_DEBUG_DIR)/debug#                 # Debug executable name
-_DEBUG_FLAGS = -g#                                  # Debug flags
+_DEBUG_FLAGS = -ggdb -O0 -DDEBUG#                   # Debug flags
 _DEBUG_PORT  = 12347#                               # Debug port
 _DEBUG_CONF  = $(_DEBUG_DIR)/debug_conf.gdb
 
@@ -57,8 +57,7 @@ $(_BDIR)/$(_PROJ): $(OBJS)
 	echo ""
 	echo "------------------------------------------------------------------------------------------------------------"
 	echo ""
-	$(_CC) -o $@ $^ $(_CARGS) && \
-	echo "Employee Manager RPC: successfully built executable ${CYAN}$@${NC}"
+	$(_CC) -o $@ $^ $(_CARGS) && echo "Employee Manager RPC: successfully built executable ${CYAN}$@${NC}"
 	echo ""
 	echo "------------------------------------------------------------------------------------------------------------"
 
@@ -78,17 +77,21 @@ run: $(_BDIR)/$(_PROJ)
 
 # Delete all binaries and any editor backups of source and header files
 clean:
-	echo "Employee Manager RPC: cleaning up...\n" && \
+	echo "Employee Manager RPC: cleaning up..." && \
 	rm -rf $(_BDIR) $(_SDIR)/*~ $(_HDIR)/*~
 
 # Debug executubale
 debug: $(_DEBUG_EXE)
 
 $(_DEBUG_EXE): $(OBJS)
-	$(_CC) $(_DEBUG_FLAGS) -o $(_DEBUG_EXE) $^ $(_CARGS)
+	echo "OBJECT FILE : $(_CC) $(_CARGS) $(_DEBUG_FLAGS) -o $(_DEBUG_EXE) $^ ()()()()()()()()()()()()"
+	echo ""
+	$(_CC) $(_CARGS) $(_DEBUG_FLAGS) -c -o $(_DEBUG_EXE) $^
 
 $(_DEBUG_DIR)/%.o: %.c
-	$(_CC) $(_DEBUG_FLAGS) -c $< -o $(_DEBUG_DIR)/$@ $(_CARGS)
+	echo "C SOURCE FILE : $(_CC) $(_CARGS) $(_DEBUG_FLAGS) -c -o $(_DEBUG_DIR)/$@ $< ----------- "
+	echo ""
+	$(_CC) $(_CARGS) $(_DEBUG_FLAGS) -o $(_DEBUG_DIR)/$@ $<
 
 # GDB debug exectubale
 gdb_debug:	
