@@ -37,7 +37,7 @@ HEDRS   = $(shell find $(_HDIR) -print | grep .$(_HSUF))
 OBJS    = $(SRCS:.c=.o)
 
 # Sources
-SRCS    = $(wildcard src/*.c)
+SRCS    = $(wildcard src/*.c) main.c
 
 # Options
 OPTS =
@@ -82,16 +82,10 @@ clean:
 	rm -rf $(_BDIR) $(_SDIR)/*~ $(_HDIR)/*~
 
 # Debug executubale
-debug: $(_DEBUG_EXE)
+debug: 
 	echo "DEBUGGING"
+	$(_CC) $(_DEBUG_FLAGS) $(SRCS) -o $(_DEBUG_EXE) $(_CARGS)
 
-$(_DEBUG_EXE): $(OBJS)
-	echo "OBJECT FILE : $(_CC) $(_CARGS) $(_DEBUG_FLAGS) $^ -o $(_DEBUG_EXE)" && \
-	$(_CC) $(_CARGS) $(_DEBUG_FLAGS) $^ -o $(_DEBUG_EXE)
-
-$(_BDIR)/%.o: %.c
-	echo "C SOURCE FILE : $(_CC) $(_CARGS) $(_DEBUG_FLAGS) $< -o $(_DEBUG_DIR)/$@" && \
-	$(_CC) $(_LARGS) $(_DEBUG_FLAGS) $< -o $(_DEBUG_DIR)/$@
 
 # GDB debug exectubale
 gdb_debug:	
