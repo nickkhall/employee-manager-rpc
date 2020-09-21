@@ -51,21 +51,8 @@ OPTS =
 all: $(_BDIR)/$(_PROJ)
 
 # Link all compiled object files
-$(_BDIR)/$(_PROJ): $(OBJS)
-	echo "------------------------------------------------------------------------------------------------------------"
-	echo ""
-	echo "Employee Manager RPC: compling object files:\n${CYAN}$^${NC}\n  -- from command ${PURPLE}$@${NC}"
-	echo ""
-	echo "------------------------------------------------------------------------------------------------------------"
-	echo ""
-	$(_CC) -o $@ $^ $(_CARGS) && echo "Employee Manager RPC: successfully built executable ${CYAN}$@${NC}"
-	echo ""
-	echo "------------------------------------------------------------------------------------------------------------"
-
-# Compile all outdated source files into their respective object files
-$(_BDIR)/obj/%.o: $(SRCS) $(HEDRS) | $(_BDIR)
-	echo "Employee Manager RPC: compiling source file ${PURPLE}$<${NC}\n  -- Object File: $@\n" && \
-	$(_CC) -c $< -o $@ $(_CARGS)
+$(_BDIR)/$(_PROJ):
+	$(_CC) $(SRCS) $(_CFLAGS) $(_CARGS) -o $(_BDIR)/$(_PROJ) $^ 
 
 # Ensure target folders for binaries exist and run any additional user defined shell script
 $(_BDIR):
@@ -73,12 +60,12 @@ $(_BDIR):
 
 # Run the built executable of your project
 run: $(_BDIR)/$(_PROJ)
-	echo "Employee Manager RPC: launching executable ${CYAN}$(_BDIR)/$(_PROJ)${NC}:" && \
+	echo "Employee Manager RPC: launching executable ${CYAN}$(_BDIR)/$(_PROJ)${NC}:"
 	$(_BDIR)/$(_PROJ)
 
 # Delete all binaries and any editor backups of source and header files
 clean:
-	echo "Employee Manager RPC: cleaning up..." && \
+	echo "Employee Manager RPC: cleaning up..."
 	rm -rf $(_BDIR) $(_SDIR)/*~ $(_HDIR)/*~
 
 # Debug executubale
