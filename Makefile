@@ -7,7 +7,7 @@ _BDIR     = bin#                                    # Path to dir of binary file
 _SSUF     = c#                                      # Suffix of source files
 _HSUF     = h#                                      # Suffix of header files
 _CC       = gcc#                                    # Compiler to be used
-_CFLAGS   = -std=c11 -Wall -Werror#                 # Compiler build flags
+_CFLAGS   = -std=c11 -Wall#                         # Compiler build flags
 _PSQL     = /usr/include/postgresql#
 _LIBS     = -lpq -lserc -ldbc -lsockc#
 _LIBS_DIR = -L/usr/local/lib#
@@ -15,6 +15,9 @@ _SCRIPT   = :#                                      # Any shell script to run be
 _SHELL    = /bin/bash#                              # Shell to be used by makefile
 _CARGS    = -I$(_HDIR) -I$(_PSQL) -I/usr/include \
 						$(_LIBS_DIR) $(_LIBS) $(_CFLAGS)#       # Full set of compiler arguments
+
+_LARGS    = $(_CFLAGS) -I$(_HDIR) -I$(_PSQL) \
+						-I/usr/include#                         #
 PURPLE    = \033[0;35m#                             # Encoding of purple color for terminal output
 CYAN      = \033[0;36m#                             # Encoding of cyan color for terminal output
 NC        = \033[0m#                                # Encoding of no color for terminal output
@@ -31,12 +34,10 @@ _DEBUG_CONF  = $(_DEBUG_DIR)/debug_conf.gdb
 HEDRS   = $(shell find $(_HDIR) -print | grep .$(_HSUF))
 
 # Object Files
-OBJS    = $(shell find $(_SDIR) -print | grep .$(_SSUF) | \
-						sed -r "s/($(_SDIR))\/(.*)\.($(_SSUF))/$(_BDIR)\/obj\/\2\.o/" | \
-						sed -r "s/src//")
+OBJS    = $(SRCS:.c=.o)
 
 # Sources
-SRCS    = $(shell find $(_SDIR) -type f -name *.c)
+SRCS    = $(wildcard src/*.c)
 
 # Options
 OPTS =
@@ -62,7 +63,7 @@ $(_BDIR)/$(_PROJ): $(OBJS)
 	echo "------------------------------------------------------------------------------------------------------------"
 
 # Compile all outdated source files into their respective object files
-$(_BDIR)/obj/%.o: $(_SDIR)/%.$(_SSUF) $(HEDRS) | $(_BDIR)
+$(_BDIR)/obj/%.o: $(SRCS) $(HEDRS) | $(_BDIR)
 	echo "Employee Manager RPC: compiling source file ${PURPLE}$<${NC}\n  -- Object File: $@\n" && \
 	$(_CC) -c $< -o $@ $(_CARGS)
 
@@ -82,16 +83,15 @@ clean:
 
 # Debug executubale
 debug: $(_DEBUG_EXE)
+	echo "DEBUGGING"
 
 $(_DEBUG_EXE): $(OBJS)
-	echo "OBJECT FILE : $(_CC) $(_CARGS) $(_DEBUG_FLAGS) -o $(_DEBUG_EXE) $^ ()()()()()()()()()()()()"
-	echo ""
-	$(_CC) $(_CARGS) $(_DEBUG_FLAGS) -c -o $(_DEBUG_EXE) $^
+	echo "OBJECT FILE : $(_CC) $(_CARGS) $(_DEBUG_FLAGS) $^ -o $(_DEBUG_EXE)" && \
+	$(_CC) $(_CARGS) $(_DEBUG_FLAGS) $^ -o $(_DEBUG_EXE)
 
-$(_DEBUG_DIR)/%.o: %.c
-	echo "C SOURCE FILE : $(_CC) $(_CARGS) $(_DEBUG_FLAGS) -c -o $(_DEBUG_DIR)/$@ $< ----------- "
-	echo ""
-	$(_CC) $(_CARGS) $(_DEBUG_FLAGS) -o $(_DEBUG_DIR)/$@ $<
+$(_BDIR)/%.o: %.c
+	echo "C SOURCE FILE : $(_CC) $(_CARGS) $(_DEBUG_FLAGS) $< -o $(_DEBUG_DIR)/$@" && \
+	$(_CC) $(_LARGS) $(_DEBUG_FLAGS) $< -o $(_DEBUG_DIR)/$@
 
 # GDB debug exectubale
 gdb_debug:	

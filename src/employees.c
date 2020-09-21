@@ -114,7 +114,7 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
                                 (sizeof(ser_header->rpc_call_id)
                                 + sizeof(ser_header->tid)
                                 + sizeof(ser_header->rpc_proc_id))); 
-};
+}
 
 /*
  *
@@ -172,7 +172,7 @@ employee_t* empman_rpc_employees_employee_create(char** data) {
  */
 void empman_rpc_employees_serialize_employee_t_wrapper(void* obj, ser_buff_t* b) {
   empman_rpc_employees_serialize_employee_t(obj, b);
-};
+}
 
 /*
  * ----------------------------------------------------------------------
@@ -208,7 +208,7 @@ void empman_rpc_employees_serialize_employee_t(employee_t* employee, ser_buff_t*
   } else {
     serlib_serialize_data(b, (char*)&sentinel, sizeof(unsigned long int));
   }
-};
+}
 
 /*
  * ----------------------------------------------------------------------
@@ -254,5 +254,5 @@ employee_t* empman_rpc_employees_deserialize_list_t(ser_buff_t* b) {
   }
 
   return employee;
-};
+}
 
