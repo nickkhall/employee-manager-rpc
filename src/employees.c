@@ -17,7 +17,13 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
   // query database with id
   const char* const* query_params = &id;
   const char* SQL_INFO = getenv("SQL_INFO");
-  PGresult* db_response = libdbc_db_query_by_id(query_params, SQL_INFO);
+  const char* query = "SELECT * FROM employees WHERE id = $1 OR first = $1 OR last = $1";
+  PGresult* db_response = libdbc_db_query_by_id(query_params, SQL_INFO, query);
+  if (!db_response) {
+    printf("ERROR:: RPC - Failed to query database.\n");
+    free(recv_buffer);
+    free(send_buffer);
+  }
 
   int rows = PQntuples(db_response); 
   int cols = PQnfields(db_response);
