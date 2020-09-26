@@ -5,12 +5,13 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include "serialize.h"
+#include <serialize.h>
+#include <sockets.h>
 
 #include "../include/common.h"
 #include "../include/rpc.h"
 #include "../include/employees.h"
-#include "../include/sockets.h"
+#include "../include/postgres_info.h"
 
 #define EMP_MAN_RPC_EMPLOYEES_GET_ID 55
 

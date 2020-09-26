@@ -31,37 +31,33 @@ _DEBUG_CONF  = $(_DEBUG_DIR)/debug_conf.gdb
 ##### File Lists ##################################################################################
 
 # Header Files
-HEDRS   = $(shell find $(_HDIR) -print | grep .$(_HSUF))
+HDRS = $(SOURCES:.c=.d)
 
 # Object Files
-OBJS    = $(SRCS:.c=.o)
+OBJS = ${SRC:.c=.o}
 
 # Sources
-SRCS    = $(wildcard src/*.c) main.c
+SRCS = $(wildcard src/*.c)
 
 # Options
 OPTS =
 
+
 ##### Dependency Rules ############################################################################
 
-.PHONY: all run clean debug gdb_debug gdb_debugger 
-.SILENT: $(_BDIR)/$(_PROJ) $(OBJS) $(_BDIR) run clean
+.PHONY: clean debug gdb_debug gdb_debugger 
+.SILENT: clean
 
-# Default
-all: $(_BDIR)/$(_PROJ)
+all: $(_PROJ)
 
-# Link all compiled object files
-$(_BDIR)/$(_PROJ):
-	$(_CC) $(SRCS) $(_CFLAGS) $(_CARGS) -o $(_BDIR)/$(_PROJ) $^ 
+$(_PROJ): 
+	$(_CC) main.c $(SRCS) -o $(_BDIR)/$@ $(_CARGS)
 
-# Ensure target folders for binaries exist and run any additional user defined shell script
-$(_BDIR):
-	mkdir -p $(_BDIR)/obj && $(_SCRIPT)
+$(_BDIR)/%o: $(_SDIR)/%.c
+	$(_CC) -c $(SRCS) $(_CARGS) -o $@
 
-# Run the built executable of your project
-run: $(_BDIR)/$(_PROJ)
-	echo "Employee Manager RPC: launching executable ${CYAN}$(_BDIR)/$(_PROJ)${NC}:"
-	$(_BDIR)/$(_PROJ)
+$(_SDIR)/%.c: $(_HDIR)/%.h
+	$(_CC) -o $< -MM $(_CARGS)
 
 # Delete all binaries and any editor backups of source and header files
 clean:
@@ -70,8 +66,7 @@ clean:
 
 # Debug executubale
 debug: 
-	echo "DEBUGGING"
-	$(_CC) $(_DEBUG_FLAGS) $(SRCS) -o $(_DEBUG_EXE) $(_CARGS)
+	$(_CC) $(_DEBUG_FLAGS) main.c $(SRCS) -o $(_DEBUG_EXE) $(_CARGS)
 
 
 # GDB debug exectubale

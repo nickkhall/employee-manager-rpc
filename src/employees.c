@@ -4,7 +4,6 @@
 #include "db.h"
 
 #include "../include/employees.h"
-#include "../include/postgres_info.h"
 #include "../include/utils.h"
 
 void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffer) {
@@ -17,6 +16,7 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
  
   // query database with id
   const char* const* query_params = &id;
+  const char* SQL_INFO = getenv("SQL_INFO");
   PGresult* db_response = libdbc_db_query_by_id(query_params, SQL_INFO);
 
   int rows = PQntuples(db_response); 
