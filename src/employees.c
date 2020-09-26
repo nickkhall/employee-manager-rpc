@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <libpq-fe.h>
-#include "serialize.h"
-#include "db.h"
+#include <serialize.h>
+#include <db.h>
 
 #include "../include/employees.h"
 #include "../include/utils.h"
