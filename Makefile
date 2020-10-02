@@ -75,5 +75,5 @@ gdb_debug:
 
 # GDB debugger server
 gdb_debugger:	
-	$(shell tmux splitw -h "gdbserver localhost:$(_DEBUG_PORT) $(_DEBUG_EXE)") 
+	$(shell tmux splitw -v "gdbserver localhost:$(_DEBUG_PORT) $(_DEBUG_EXE)") 
 	echo "Employee Manager RPC: Debugging on port $(_DEBUG_PORT)..."
