@@ -1,4 +1,4 @@
-#include "../include/rpc.h"
+#include "include/rpc.h"
 
 int main() {
   for(;;) {

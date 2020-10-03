@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <libpq-fe.h>
-#include "serialize.h"
+#include <serialize.h>
+#include <db.h>
 
 #include "../include/employees.h"
-#include "../include/db.h"
 #include "../include/utils.h"
 
 void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffer) {
@@ -16,7 +16,14 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
  
   // query database with id
   const char* const* query_params = &id;
-  PGresult* db_response = empman_rpc_db_query_by_id(query_params);
+  const char* SQL_INFO = getenv("SQL_INFO");
+  const char* query = "SELECT * FROM employees WHERE id = $1 OR first = $1 OR last = $1";
+  PGresult* db_response = libdbc_db_query_by_id(query_params, SQL_INFO, query);
+  if (!db_response) {
+    printf("ERROR:: RPC - Failed to query database.\n");
+    free(recv_buffer);
+    free(send_buffer);
+  }
 
   int rows = PQntuples(db_response); 
   int cols = PQnfields(db_response);
@@ -38,7 +45,7 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
       exit(1);
     }
 
-    empman_rpc_db_convert_pq_data(*(data + r), db_response, r);
+    libdbc_db_convert_pq_data(*(data + r), db_response, r);
   }
 
   // create memory for employee linked list
@@ -113,7 +120,7 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
                                 (sizeof(ser_header->rpc_call_id)
                                 + sizeof(ser_header->tid)
                                 + sizeof(ser_header->rpc_proc_id))); 
-};
+}
 
 /*
  *
@@ -171,7 +178,7 @@ employee_t* empman_rpc_employees_employee_create(char** data) {
  */
 void empman_rpc_employees_serialize_employee_t_wrapper(void* obj, ser_buff_t* b) {
   empman_rpc_employees_serialize_employee_t(obj, b);
-};
+}
 
 /*
  * ----------------------------------------------------------------------
@@ -207,7 +214,7 @@ void empman_rpc_employees_serialize_employee_t(employee_t* employee, ser_buff_t*
   } else {
     serlib_serialize_data(b, (char*)&sentinel, sizeof(unsigned long int));
   }
-};
+}
 
 /*
  * ----------------------------------------------------------------------
@@ -253,5 +260,5 @@ employee_t* empman_rpc_employees_deserialize_list_t(ser_buff_t* b) {
   }
 
   return employee;
-};
+}
 

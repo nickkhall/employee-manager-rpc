@@ -5,12 +5,13 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include "serialize.h"
+#include <serialize.h>
+#include <sockets.h>
 
 #include "../include/common.h"
 #include "../include/rpc.h"
 #include "../include/employees.h"
-#include "../include/sockets.h"
+#include "../include/postgres_info.h"
 
 #define EMP_MAN_RPC_EMPLOYEES_GET_ID 55
 
@@ -22,7 +23,7 @@ int* empman_rpc_init() {
     return NULL;
   }
 
-  sock_udp_fd = socklib_socket_create();
+  sock_udp_fd = socklib_socket_create(RPC_SERVER_PORT);
   if (*sock_udp_fd == -1) {
     printf("ERROR:: RPC - Failed to create socket in empman_rpc_init\n");
     exit(1);
@@ -43,13 +44,13 @@ int* empman_rpc_init() {
   printf("- Employee Manager - \nRPC - Server is now listening on port %d...\n", RPC_SERVER_PORT);
 
   return sock_udp_fd;
-};
+}
 
 void empman_rpc_init_buffers(ser_buff_t** recv_buffer, ser_buff_t** send_buffer)
 {
   serlib_init_buffer_of_size(send_buffer, MAX_RECV_BUFF_SIZE);
   serlib_init_buffer_of_size(recv_buffer, MAX_RECV_BUFF_SIZE);
-};
+}
 
 
 void empman_rpc_process_traffic(ser_buff_t** recv_buffer, ser_buff_t** send_buffer)
@@ -75,7 +76,7 @@ void empman_rpc_process_traffic(ser_buff_t** recv_buffer, ser_buff_t** send_buff
     default:
       break;
   }
-};
+}
 
 
 
@@ -125,5 +126,5 @@ void empman_rpc_handle_traffic()
 
   // reset send buffer
   serlib_reset_buffer(*send_buffer);
-};
+}
 
