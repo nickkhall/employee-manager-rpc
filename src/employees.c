@@ -1,3 +1,4 @@
+#include <string.h>
 #include <stdlib.h>
 #include <libpq-fe.h>
 #include <serialize.h>
@@ -7,21 +8,12 @@
 #include "../include/utils.h"
 
 void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffer) {
-  // deserialize header to increment next counter for employee data deserialization
-  //serlib_deserialize_data(recv_buffer, (char*));
-
   const char* id = (char*) malloc(sizeof(char) * 33);
-  // deserialize request to get employee id
   serlib_deserialize_data(recv_buffer, (void*)id, sizeof(char*));
  
   // query database with id
   const char* const* query_params = &id;
-  const char* SQL_INFO = getenv("SQL_INFO");
-  const char* query = "SELECT * FROM employees WHERE id = $1 OR first = $1 OR last = $1";
-  PGresult* db_response = libdbc_db_query_by_id(query_params, SQL_INFO, query);
-  if (!db_response) {
-    printf("ERROR:: RPC - Failed to query database.\n");
-    free(recv_buffer);
+  const char* SQL_INFO = getenv("SQL_INFO"); const char* query = "SELECT * FROM employees WHERE id = $1 OR first = $1 OR last = $1"; PGresult* db_response = libdbc_db_query_by_id(query_params, SQL_INFO, query); if (!db_response) { printf("ERROR:: RPC - Failed to query database.\n"); free(recv_buffer);
     free(send_buffer);
   }
 
@@ -74,9 +66,7 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
     empman_utils_list_append(employees, employee);
   }
 
-  // @TODO: REFACTOR / ABSTRACT [POC MODE]
   // create serialized header
-  // serialized header shite
   int SERIALIZED_HDR_SIZE = sizeof(ser_header_t); // temporary
   serlib_buffer_skip(send_buffer, SERIALIZED_HDR_SIZE);
 
@@ -184,12 +174,6 @@ employee_t* empman_rpc_employees_employee_create(char** data) {
 }
 
 /*
- * +--------------------------------------+
- * |          Generic Wrappers            |
- * +--------------------------------------+
- */
-
-/*
  * ----------------------------------------------------------------------
  * function: empman_rpc_employees_serialize_employee_t_wrapper
  * ----------------------------------------------------------------------
@@ -202,6 +186,21 @@ employee_t* empman_rpc_employees_employee_create(char** data) {
  */
 void empman_rpc_employees_serialize_employee_t_wrapper(void* obj, ser_buff_t* b) {
   empman_rpc_employees_serialize_employee_t(obj, b);
+}
+
+/*
+ * ----------------------------------------------------------------------
+ * function: empman_rpc_employees_deserialize_employee_t_wrapper
+ * ----------------------------------------------------------------------
+ * params  : 
+ *         > obj - void*
+ *         > b   - ser_buff_t*
+ * ----------------------------------------------------------------------
+ * Generic wrapper function for deserializing an employee.
+ * ----------------------------------------------------------------------
+ */
+void empman_rpc_employees_deserialize_employee_t_wrapper(void* obj, ser_buff_t* b) {
+  empman_rpc_employees_deserialize_employee_t(obj, b);
 }
 
 /*
@@ -242,14 +241,14 @@ void empman_rpc_employees_serialize_employee_t(employee_t* employee, ser_buff_t*
 
 /*
  * ----------------------------------------------------------------------
- * function: empman_rpc_employees_deserialize_list_t
+ * function: empman_rpc_employees_deserialize_employee_t
  * ----------------------------------------------------------------------
  * params  : b - ser_buff_t*
  * ----------------------------------------------------------------------
  * Deserializes an employee.
  * ----------------------------------------------------------------------
  */
-employee_t* empman_rpc_employees_deserialize_list_t(ser_buff_t* b) {
+employee_t* empman_rpc_employees_deserialize_employee_t(list_node_t* data, ser_buff_t* b) {
   unsigned int sentinel = 0;
 
   serlib_serialize_data(b, (char*)&sentinel, sizeof(unsigned int));
@@ -260,7 +259,7 @@ employee_t* empman_rpc_employees_deserialize_list_t(ser_buff_t* b) {
 
   serlib_buffer_skip(b, -1 * sizeof(unsigned long int));
 
-  employee_t* employee = calloc(1, sizeof(employee_t));
+  employee_t* employee = malloc(sizeof(employee_t));
 
   serlib_serialize_data(b, (char*)employee->id,        sizeof(char) * 33);
   serlib_serialize_data(b, (char*)employee->first,     sizeof(char) * 51);
@@ -279,10 +278,21 @@ employee_t* empman_rpc_employees_deserialize_list_t(ser_buff_t* b) {
     employee->salary = NULL;
   } else {
     serlib_buffer_skip(b, -1 * sizeof(unsigned long int));
-    employee->salary = calloc(1, sizeof(int));
-    serlib_serialize_data(b, (char*) employee->salary, sizeof(int));
+    serlib_serialize_data(b, (char*) employee->salary, sizeof(int*));
   }
 
-  return employee;
+  memcpy(data, employee, sizeof(employee_t));
+  free(employee->id);
+  free(employee->first);
+  free(employee->last);
+  free(employee->email);
+  free(employee->address);
+  free(employee->phone);
+  free(employee->start);
+  free(employee->gender);
+  free(employee->ethnicity);
+  free(employee->title);
+  free(employee->salary);
+  free(employee);
 }
 
