@@ -128,6 +128,30 @@ void empman_rpc_employees_get_id(ser_buff_t* recv_buffer, ser_buff_t* send_buffe
  *
  *
  */
+employee_t* empman_rpc_employees_employee_initialize(void) {
+  employee_t* employee = (employee_t*) malloc(sizeof(employee_t));
+
+  employee->id =        (char*) malloc(sizeof(char) * 33);
+  employee->first =     (char*) malloc(sizeof(char) * 51);
+  employee->last =      (char*) malloc(sizeof(char) * 51);
+  employee->email =     (char*) malloc(sizeof(char) * 101);
+  employee->address =   (char*) malloc(sizeof(char) * 76);
+  employee->phone =     (char*) malloc(sizeof(char) * 51);
+  employee->start =     (time_t) malloc(sizeof(time_t));
+  employee->gender =    (char*) malloc(sizeof(char) * 7);
+  employee->ethnicity = (char*) malloc(sizeof(char) * 51);
+  employee->title =     (char*) malloc(sizeof(char) * 51);
+  employee->salary =    (char*) malloc(sizeof(int*));
+
+  return employee;
+}
+
+/*
+ *
+ *
+ *
+ *
+ */
 employee_t* empman_rpc_employees_employee_create(char** data) {
   if (!data) {
     printf("ERROR:: RPC - Invalid pointer for data in empman_rpc_employees_employee_create\n");
