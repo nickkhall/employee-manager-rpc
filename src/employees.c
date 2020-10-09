@@ -127,11 +127,11 @@ employee_t* empman_rpc_employees_employee_initialize(void) {
   employee->email =     (char*) malloc(sizeof(char) * 101);
   employee->address =   (char*) malloc(sizeof(char) * 76);
   employee->phone =     (char*) malloc(sizeof(char) * 51);
-  employee->start =     (time_t) malloc(sizeof(time_t));
+  employee->start =     (time_t*) malloc(sizeof(time_t*));
   employee->gender =    (char*) malloc(sizeof(char) * 7);
   employee->ethnicity = (char*) malloc(sizeof(char) * 51);
   employee->title =     (char*) malloc(sizeof(char) * 51);
-  employee->salary =    (char*) malloc(sizeof(int*));
+  employee->salary =    (int*) malloc(sizeof(int*));
 
   return employee;
 }
@@ -164,7 +164,7 @@ employee_t* empman_rpc_employees_employee_create(char** data) {
   employee->email =     (char*) *(data + 3);
   employee->address =   (char*) *(data + 4);
   employee->phone =     (char*) *(data + 5);
-  employee->start =     (time_t) *(data + 6);
+  employee->start =     (time_t*) *(data + 6);
   employee->ethnicity = (char*) *(data + 7);
   employee->gender =    (char*) *(data + 8);
   employee->title =     (char*) *(data + 9);
@@ -251,13 +251,13 @@ void empman_rpc_employees_serialize_employee_t(employee_t* employee, ser_buff_t*
 employee_t* empman_rpc_employees_deserialize_employee_t(list_node_t* data, ser_buff_t* b) {
   unsigned int sentinel = 0;
 
-  serlib_serialize_data(b, (char*)&sentinel, sizeof(unsigned int));
+  serlib_serialize_data(b, (char*)&sentinel, sizeof(int));
 
   if (sentinel == 0xFFFFFFFF) {
     return NULL;
   }
 
-  serlib_buffer_skip(b, -1 * sizeof(unsigned long int));
+  serlib_buffer_skip(b, -1 * sizeof(int));
 
   employee_t* employee = malloc(sizeof(employee_t));
 
@@ -267,7 +267,7 @@ employee_t* empman_rpc_employees_deserialize_employee_t(list_node_t* data, ser_b
   serlib_serialize_data(b, (char*)employee->email,     sizeof(char) * 101);
   serlib_serialize_data(b, (char*)employee->address,   sizeof(char) * 76);
   serlib_serialize_data(b, (char*)employee->phone,     sizeof(char) * 51);
-  serlib_serialize_data(b, (char*)employee->start,     sizeof(time_t));
+  serlib_serialize_time_t(b, employee->start,          sizeof(time_t*));
   serlib_serialize_data(b, (char*)employee->gender,    sizeof(char) * 7);
   serlib_serialize_data(b, (char*)employee->ethnicity, sizeof(char) * 51);
   serlib_serialize_data(b, (char*)employee->title,     sizeof(char) * 51);
@@ -277,8 +277,8 @@ employee_t* empman_rpc_employees_deserialize_employee_t(list_node_t* data, ser_b
   if (sentinel == 0xFFFFFFFF) {
     employee->salary = NULL;
   } else {
-    serlib_buffer_skip(b, -1 * sizeof(unsigned long int));
-    serlib_serialize_data(b, (char*) employee->salary, sizeof(int*));
+    serlib_buffer_skip(b, -1 * sizeof(int));
+    serlib_serialize_data_int_ptr(b, employee->salary, sizeof(int*));
   }
 
   memcpy(data, employee, sizeof(employee_t));

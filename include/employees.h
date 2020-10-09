@@ -15,7 +15,7 @@ typedef struct _employee_t {
   char* email;
   char* address;
   char* phone;
-  time_t start;
+  time_t* start;
   char* gender;
   char* ethnicity;
   char* title;
