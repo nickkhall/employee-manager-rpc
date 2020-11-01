@@ -23,7 +23,7 @@ int* empman_rpc_init() {
     return NULL;
   }
 
-  sock_udp_fd = socklib_socket_create(RPC_SERVER_PORT);
+  sock_udp_fd = socklib_socket_create(RPC_SERVER_HOST, RPC_SERVER_PORT, 0);
   if (*sock_udp_fd == -1) {
     printf("ERROR:: RPC - Failed to create socket in empman_rpc_init\n");
     exit(1);
