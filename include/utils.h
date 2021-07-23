@@ -3,8 +3,7 @@
 
 #include <stdbool.h>
 #include <libpq-fe.h>
-
-#include "serialize.h"
+#include <serc.h>
 
 char* empman_rpc_utils_trim_whitespaces(char* str);
 

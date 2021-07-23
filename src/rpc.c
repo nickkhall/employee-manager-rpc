@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include <serialize.h>
+#include <serc.h>
 #include <sockets.h>
 
 #include "../include/common.h"
