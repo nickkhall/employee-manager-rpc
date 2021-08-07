@@ -52,6 +52,5 @@ Mkfile.old
 dkms.conf
 *.swp
 /bin
-/debug
 *postgres_info.h
 bin/
