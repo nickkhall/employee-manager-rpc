@@ -1,1 +1,1 @@
-target remote localhost:12347
+target remote :12347

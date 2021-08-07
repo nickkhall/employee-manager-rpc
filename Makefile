@@ -70,11 +70,6 @@ debug:
 	$(_CC) $(_DEBUG_FLAGS) main.c $(SRCS) -o $(_DEBUG_EXE) $(_CARGS)
 
 
-# GDB debug exectubale
+# GDB debug executable (MAIN/USE ME)
 gdb_debug:	
 	gdb -x $(_DEBUG_CONF)
-
-# GDB debugger server
-gdb_debugger:	
-	$(shell tmux splitw -v "gdbserver localhost:$(_DEBUG_PORT) $(_DEBUG_EXE)") 
-	echo "Employee Manager RPC: Debugging on port $(_DEBUG_PORT)..."
