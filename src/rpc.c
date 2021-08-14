@@ -6,7 +6,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <serc.h>
-#include <sockets.h>
+#include <sockc.h>
 
 #include "../include/common.h"
 #include "../include/rpc.h"
@@ -23,7 +23,7 @@ int* empman_rpc_init() {
     return NULL;
   }
 
-  sock_udp_fd = socklib_socket_create(RPC_SERVER_PORT);
+  sock_udp_fd = socklib_socket_create(RPC_SERVER_PORT, 4);
   if (*sock_udp_fd == -1) {
     printf("ERROR:: RPC - Failed to create socket in empman_rpc_init\n");
     exit(1);
